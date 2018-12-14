@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml" lang="zh-cn">
+<head>
+    <title>广州红黑信息技术</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+<style>
+</style>
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">听多多</a>
+        <a>
+          <cite>音频类别</cite></a>
+      </span>
+    <button class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+            onclick="location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></button>
+</div>
+<div id="app" class="x-body">
+    <div class="layui-row">
+        <div class="layui-form layui-col-md12 x-so">
+            <div class="layui-inline">
+                <select id="stat" name="stat">
+                    <option value="1" select="true">启用</option>
+                    <option value="0">停用</option>
+                </select>
+            </div>
+            <input type="text" name="value" placeholder="请输入名称" autocomplete="off" class="layui-input"
+                   v-model="value"/>
+            <button id="reset" class="layui-btn" v-on:click="resetAction()"><i class="layui-icon">
+                &#xe640;</i></button>
+            <button id="search" class="layui-btn" v-on:click="search()"><i class="layui-icon">
+                &#xe615;</i></button>
+        </div>
+    </div>
+    <xblock>
+        测试
+    </xblock>
+    <table id="table"></table>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            level: 1,
+            value:''
+        },
+        methods: {
+            search: function () {
+                $table.bootstrapTable('refreshOptions', {pageNumber: 1});
+            },
+            resetAction: function () {
+                this.value = '';
+            }
+        }
+    });
+
+    //表格插件
+    let $table = $('#table');
+    $(function () {
+        // bootstrap table初始化
+        $table.bootstrapTable
+        ({
+            url: '/setField/list',
+            striped: true,
+            search: false,
+            showRefresh: false,
+            showColumns: false,
+            minimumCountColumns: 2,
+            clickToSelect: true,
+            detailView: false,
+            detailFormatter: 'detailFormatter',
+            pagination: true,
+            paginationLoop: false,
+            sidePagination: 'server',
+            silentSort: false,
+            sortName: 'level',
+            sortable: true,
+            smartDisplay: false,
+            escape: true,
+            searchOnEnterKey: true,
+            idField: 'id',
+            maintainSelected: true,
+            toolbar: '#toolbar',
+            columns: [
+                {field: 'ck', checkbox: true},
+                {
+                    id: '',
+                    title: '序号',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        let pageNumber = $table.bootstrapTable('getOptions').pageNumber;
+                        let pageSize = $table.bootstrapTable('getOptions').pageSize;
+                        return (pageNumber - 1) * pageSize + index + 1;
+                    }
+                },
+                {field: 'value', title: '名称', align: 'center'},
+                {field: 'seq', title: '顺序', align: 'center'},
+                {
+                    field: 'imageUrl',
+                    title: '图标',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return '<img src="' + value + '" />';
+                    }
+                },
+                {
+                    field: 'stat',
+                    title: '状态',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (value === '1') {
+                            return '<span class=\"label label-success\" onclick="updateStatusAction(\''
+                                + row.id + '\', \'0\')">启用</span>';
+                        } else {
+                            return '<span class=\"label label-default\" onclick=\"updateStatusAction(\''
+                                + row.id + '\', \'1\')">停用</span>';
+                        }
+                    }
+                },
+                {
+                    field: 'id',
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return '<a class="table-operation" title="编辑" onclick="x_admin_show(\'编辑\',\'/setField/edit/' +
+                            value + '\')" href="javascript:;"><i class="layui-icon">&#xe642;</i></a>';
+                    }
+                }
+            ],
+            queryParams: function (params) {
+                return {
+                    rows: params.limit,
+                    page: (params.offset / params.limit) + 1,
+                    sort: params.sort,
+                    order: params.order,
+                    stat: $('#stat option:selected').val(),
+                    level: vm.level,
+                    value: vm.value
+
+                };
+            }
+        });
+
+    });
+
+    /* ]]> */
+</script>
+</body>
+
+</html>

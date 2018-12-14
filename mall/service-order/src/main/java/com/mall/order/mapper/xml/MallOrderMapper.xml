@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.order.mapper.MallOrderMapper">
+
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall.order.entity.MallOrder">
+        <id column="id" property="id" />
+        <result column="order_no" property="orderNo" />
+        <result column="shop_id" property="shopId" />
+        <result column="order_status" property="orderStatus" />
+        <result column="product_count" property="productCount" />
+        <result column="product_amount_total" property="productAmountTotal" />
+        <result column="order_amount_total" property="orderAmountTotal" />
+        <result column="coin" property="coin" />
+        <result column="logistics_fee" property="logisticsFee" />
+        <result column="is_unpacking_inspection" property="isUnpackingInspection" />
+        <result column="is_invoice" property="isInvoice" />
+        <result column="address_id" property="addressId" />
+        <result column="orderlogistics_id" property="orderlogisticsId" />
+        <result column="pay_channel" property="payChannel" />
+        <result column="out_trade_no" property="outTradeNo" />
+        <result column="create_time" property="createTime" />
+        <result column="pay_time" property="payTime" />
+        <result column="delivery_time" property="deliveryTime" />
+        <result column="user_id" property="userId" />
+        <result column="user_remarks" property="userRemarks" />
+        <result column="order_settlement_status" property="orderSettlementStatus" />
+        <result column="order_settlement_time" property="orderSettlementTime" />
+    </resultMap>
+
+</mapper>

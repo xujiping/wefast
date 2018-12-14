@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.goods.mapper.MallSkuMapper">
+
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall.goods.entity.MallSku">
+        <id column="id" property="id" />
+        <result column="goods_id" property="goodsId" />
+        <result column="sku" property="sku" />
+        <result column="price" property="price" />
+        <result column="old_price" property="oldPrice" />
+        <result column="inventory" property="inventory" />
+        <result column="sales_volume" property="salesVolume" />
+    </resultMap>
+
+</mapper>

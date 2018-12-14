@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>欢迎页面-X-admin2.0</title>
+    <head th:include="inc/common :: head"></head>
+    <link th:href="@{/css/wangEditor_table_1.css}" rel="stylesheet" />
+</head>
+
+<body>
+<div class="x-body" id="app">
+    <div v-html="goodsDetail"></div>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    var goodsDetail = [[${goodsDetail}]];
+
+    //vue.js初始化
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            id: goodsDetail.id,
+            goodsDetail: goodsDetail.description
+        }
+    });
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //自定义验证规则
+        form.verify({
+            nikename: function (value) {
+                if (value.length < 5) {
+                    return '昵称至少得5个字符啊';
+                }
+            }
+        });
+
+    });
+
+    /* ]]> */
+</script>
+<script>var _hmt = _hmt || [];
+(function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();</script>
+</body>
+
+</html>

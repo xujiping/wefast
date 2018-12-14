@@ -1,0 +1,11 @@
+FROM java:8-jre
+MAINTAINER xujiping <xjpdyx@hotmail.com>
+
+VOLUME /tmp/eureka
+
+ADD /target/eureka-0.0.1-SNAPSHOT.jar /app/
+
+EXPOSE 1025
+
+ENTRYPOINT ["java", "-jar", "/app/eureka-0.0.1-SNAPSHOT.jar"]
+

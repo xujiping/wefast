@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>欢迎页面-X-admin2.0</title>
+    <head th:include="inc/common :: head"></head>
+    <link rel="stylesheet" th:href="@{/plugins/fileinput/css/fileinput.css}"/>
+</head>
+
+<body>
+<div class="x-body" id="app">
+    <div class="layui-form-item">
+        <label for="appName" class="layui-form-label">
+            APP名称
+        </label>
+        <div class="layui-input-block">
+            <input type="text" id="appName" name="appName" required="" lay-verify="required"
+                   autocomplete="off" value="" class="layui-input" v-model="appName"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="version" class="layui-form-label">
+            版本号
+        </label>
+        <div class="layui-input-block">
+            <input type="text" value="" id="version" name="version" required="" lay-verify="required"
+                   autocomplete="off" class="layui-input" v-model="version"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="serverFlag" class="layui-form-label">
+            内部版本号
+        </label>
+        <div class=" layui-input-block">
+            <input type="text" value="" id="serverFlag" name="serverFlag" required="" lay-verify="required"
+                   autocomplete="off" class="layui-input" v-model="serverFlag"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="forceRadio" class="layui-form-label">
+            强制更新
+        </label>
+        <div id="forceRadio" class="layui-input-block">
+            <label class="radio-inline" id="force">
+                <input type="radio" name="forceRadio" id="optionsRadios3"
+                       value="false" checked="checked" /> 非强制
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="forceRadio" id="optionsRadios4"
+                       value="true" /> 强制
+            </label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="detail" class="layui-form-label">
+            描述
+        </label>
+        <div class="layui-input-block">
+            <textarea id="detail" name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <input id="uploadfile" name="file" type="file"/>
+    </div>
+    <div class="layui-form-item" style="text-align: center;">
+        <button class="layui-btn" lay-filter="update" onclick="upload()">
+            更新
+        </button>
+    </div>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:src="@{/plugins/fileinput/js/fileinput.js}"></script>
+<script th:src="@{/plugins/fileinput/js/locales/zh.js}"></script>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            id: 0,
+            appName: '',
+            version: '',
+            serverFlag: '',
+            detail: ''
+        }
+    });
+
+    function upload() {
+        $("#uploadfile").fileinput("upload");
+
+    }
+
+    $(function () {
+        $("#uploadfile").fileinput({
+            language: 'zh', //设置语言
+            uploadUrl: "/appUpdate/upload", //上传的地址
+            allowedFileExtensions: ['apk'],//接收的文件后缀
+            uploadAsync: true, //默认异步上传
+            showUpload: false, //是否显示上传按钮
+            showRemove: true, //显示移除按钮
+            showPreview: true, //是否显示预览
+            showCaption: false,//是否显示标题
+            browseClass: "btn btn-primary", //按钮样式
+            dropZoneEnabled: true,//是否显示拖拽区域
+            maxFileCount: 1, //表示允许同时上传的最大文件个数
+            enctype: 'multipart/form-data',
+            validateInitialCount: true,
+            msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+        }).on("fileuploaded", function (event, data, previewId, index) {
+            let appName = vm.appName;
+            let version = vm.version;
+            let force = $("input[name='forceRadio']:checked").val();
+            let detail = $("#detail").val();
+            let code = data.response.code;
+            let fileName = data.response.data;
+            let serverFlag = $("#serverFlag").val();
+            let url = "/appUpdate/add";
+            if (code === 0) {
+                $.post(url, {
+                    fileName: fileName,
+                    appName: appName,
+                    serverFlag: serverFlag,
+                    version: version,
+                    force: force,
+                    detail: detail
+                }, function (result) {
+                    if (result.code === 0) {
+                        $("#uploadfile").fileinput("clear");
+                        layer.msg('操作成功', {icon: 1});
+                        vm.search();
+                    }
+                });
+            }
+        });
+
+    });
+
+    /* ]]> */
+</script>
+</body>
+
+</html>

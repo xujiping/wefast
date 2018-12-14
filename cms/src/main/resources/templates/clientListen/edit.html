@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>欢迎页面-X-admin2.0</title>
+    <head th:include="inc/common :: head"></head>
+
+</head>
+
+<body>
+<div class="x-body" id="app">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="code" class="layui-form-label">
+                邀请码
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="code" name="code" required="" lay-verify="required"
+                       autocomplete="off" value="" class="layui-input" v-model="code" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn" lay-filter="update" lay-submit="">
+                更新
+            </button>
+        </div>
+    </form>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    let clientListen = [[${clientListen}]];
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            id: clientListen.id,
+            code: clientListen.invitationCode
+        }
+    });
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        let form = layui.form
+            , layer = layui.layer;
+
+        //自定义验证规则
+        form.verify({
+            code: function (value) {
+                if (value.length < 3) {
+                    return '赚钱码不能低于3个字符';
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(update)', function (data) {
+            let url = '/clientListen/' + vm.id;
+            vm.$http.put(url, {
+                code: vm.code
+            }, {emulateJSON:true}).then(function(response){
+                let result = response.body;
+                if (result.code === 0){
+                    layer.alert("修改成功", {icon: 6}, function () {
+                        // 获得frame索引
+                        let index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                }else{
+                    layer.alert("修改失败，请联系攻城狮", {icon: 6});
+                }
+            });
+            return false;
+        });
+
+
+    });
+
+    /* ]]> */
+</script>
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.gelunbu.mapper.WealMapper">
+
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall.gelunbu.entity.Weal">
+        <id column="id" property="id" />
+        <result column="client_listen_id" property="clientListenId" />
+        <result column="all_coin" property="allCoin" />
+        <result column="current_coin" property="currentCoin" />
+        <result column="today_coin" property="todayCoin" />
+        <result column="current_gold" property="currentGold" />
+        <result column="today_gold" property="todayGold" />
+        <result column="all_use_time" property="allUseTime" />
+        <result column="today_use_time" property="todayUseTime" />
+        <result column="withdraw" property="withdraw" />
+        <result column="yestoday_gold" property="yestodayGold" />
+        <result column="yestoday_gold_to_coin" property="yestodayGoldToCoin" />
+        <result column="current_bean" property="currentBean" />
+    </resultMap>
+
+</mapper>

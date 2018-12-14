@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>听多多官网</title>
+    <head th:include="inc/common :: head"></head>
+    <link rel="stylesheet" th:href="@{/css/index.css}"/>
+</head>
+<body>
+<div class="container-fluid main">
+    <div th:include="inc/common :: navbar"></div>
+
+    <div id="sy1">
+        <div class="container">
+            <p class="font-weight-light sy1-title">聆听创造价值</p>
+            <img id="sy1-1" class="img-fluid" th:src="@{/images/sy1_1.png}"/>
+        </div>
+    </div>
+    <div id="sy2">
+        <div class="container main-box">
+            <div class="row">
+                <div class="col-md-6 col-6 line-box">
+                    <img class="img-fluid" th:src="@{/images/sy2_1.png}"/>
+                    <h5 class="sy2-title">全新UI</h5>
+                    <p class="sy2-text">总想给您不一样的全新UI，更多内容一目了然</p>
+                </div>
+                <div class="col-md-6 col-6 line-box">
+                    <img class="img-fluid" th:src="@{/images/sy2_2.png}"/>
+                    <h5 class="sy2-title">优质媒体</h5>
+                    <p class="sy2-text">通过与优质媒体和PGC的合作，听多多获得海量的原创内容</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-12 line-box">
+                    <img class="img-fluid" th:src="@{/images/sy2_5.png}"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-6 line-box">
+                    <img class="img-fluid" th:src="@{/images/sy2_3.png}"/>
+                    <h5 class="sy2-title">精彩音频</h5>
+                    <p class="sy2-text">上万条精彩音频随您听，上千个精彩专辑任您选</p>
+                </div>
+                <div class="col-md-6 col-6 line-box">
+                    <img class="img-fluid" th:src="@{/images/sy2_4.png}"/>
+                    <h5 class="sy2-title">随心订阅</h5>
+                    <p class="sy2-text">海量专辑随您订，最新音频随心听</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="sy3">
+        <div class="container">
+            <p class="sy3-title">海量声音</p>
+            <p class="sy3-text" style="font-size: 1.5rem;"><span style="color: #ff1800;">千万</span>条优质声音</p>
+            <img class="img-fluid" th:src="@{/images/sy3_1.png}"/>
+        </div>
+    </div>
+    <div id="sy4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-6">
+                    <img class="img-fluid" th:src="@{/images/sy4_1.png}"/>
+                </div>
+                <div class="col-md-6 col-6 sy4-content" style="margin: auto 0; padding-left: 90px;">
+                    <p class="sy4-title">即刻订阅</p>
+                    <p class="sy4-text" style="font-size: 1.5rem;">最新内容<span style="color: #ff1800;">及时</span>听</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:include="inc/common :: footer"></div>
+</div>
+<div th:include="inc/common :: plugins"></div>
+</body>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    $(function () {
+        //设置当前navbar
+        $('#index a').css('color', '#ff1800');
+        setNavbar();
+        if ($(window).width() <= 576) {
+            //sy1
+            $('.sy1-title').css('font-size', '20px');
+            //sy2
+            $('#sy2').css('padding', '40px 0 20px 0');
+            $('.sy2-title').css('font-size', '12px');
+            $('.sy2-text').css('font-size', '8px');
+            $('.line-box').css('margin-top', '0');
+            //sy3
+            $('.sy3-title').css('font-size', '16px');
+            $('.sy3-text').css('font-size', '12px');
+            //sy4
+            $('.sy4-title').css('font-size', '16px');
+            $('.sy4-text').css('font-size', '12px');
+            $('.sy4-content').css('padding-left', '20px');
+        }
+    });
+
+    /* ]]> */
+</script>
+</html>

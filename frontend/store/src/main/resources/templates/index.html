@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>听多多商城-首页</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+<body>
+<!-- page集合的容器，里面放多个平行的.page，其他.page作为内联页面由路由控制展示 -->
+<div class="page-group" id="app">
+    <!-- 单个page ,第一个.page默认被展示-->
+    <div class="page page-current" id="index">
+        <!-- 标题栏 -->
+        <header class="bar bar-nav">
+            <a class="icon icon-left pull-left back"></a>
+            <h1 class="title">商城</h1>
+        </header>
+        <!-- 这里是页面内容区 -->
+        <div class="content infinite-scroll infinite-scroll-bottom" data-distance="100">
+            <div class="row no-gutter" v-html="goodsList">
+            </div>
+            <!-- 加载提示符 -->
+            <div class="infinite-scroll-preloader">
+                <div class="preloader"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:include="inc/common :: foot"></div>
+</body>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //初始化vue
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            gatewayUrl: "http://192.168.3.11:1002",
+            page: 0,
+            rows: 10,
+            goodsList: '',
+            loading: false,
+            maxPage: 10
+        },
+        methods: {
+            getGoodsList: function (event) {
+                //商品列表
+                var url = vm.gatewayUrl + '/service-goods/mallGoods/list?page=' + vm.page + '&rows=' + vm.rows ;
+                vm.$http.get(url, {emulateJSON: true}).then(function
+                    (response) {
+                    if (response.body.code == 0) {
+                        var jsonObj = JSON.parse(response.body.data);
+                        for (var i = 0; i < jsonObj.length; i++) {
+                            vm.goodsList +=
+                                '<div class="card col-50" onclick="showDetail(\'' + jsonObj[i].id
+                                + '\')"><div class="card-content"><div class="card-content-inner">' +
+                                '<img src="/image/goods.jpg" width="120"/><p>' + jsonObj[i].name + '</p><p>￥99.9</p>' +
+                                '</div></div></div>';
+                        }
+                    }
+                });
+            },
+            showDetail: function (id) {
+
+            }
+        }
+    });
+
+    vm.getGoodsList();
+
+    //商品详情
+    function showDetail(id){
+        window.location.href = "/goods/detail/" + id;
+    }
+
+    //注册'infinite'事件处理函数
+    $(document).on('infinite', '.infinite-scroll-bottom', function () {
+        //如果正在加载则退出
+        if (vm.loading) {
+            return;
+        }
+        vm.loading = true;
+        // 模拟1s的加载过程
+        setTimeout(function () {
+            // 重置加载flag
+            vm.loading = false;
+            if (vm.page >= vm.maxItems) {
+                // 加载完毕，则注销无限加载事件，以防不必要的加载
+                $.detachInfiniteScroll($('.infinite-scroll'));
+                // 删除加载提示符
+                $('.infinite-scroll-preloader').remove();
+                return;
+            }
+            // 添加新条目
+            vm.getGoodsList();
+            vm.page += 1;
+            //容器发生改变,如果是js滚动，需要刷新滚动
+            $.refreshScroller();
+        }, 1000);
+    });
+
+    $.init();
+
+    /* ]]> */
+</script>
+</html>

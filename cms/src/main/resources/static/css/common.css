@@ -1,0 +1,28 @@
+/* 表格操作按钮 */
+.table-operation{
+    padding: 6px;
+}
+
+.level-0 {
+    color: #00bf00;
+}
+
+.level-1 {
+    color: red;
+}
+
+.level-2 {
+    color: #ff6708;
+}
+
+.level-3 {
+    color: #727272;
+}
+
+.level-4 {
+    color: #0a0fff;
+}
+
+.level-5 {
+    color: #00bf00;
+}

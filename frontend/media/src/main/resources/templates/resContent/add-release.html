@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>听多多自媒体平台-创建专辑</title>
+    <head th:include="inc/common :: head"></head>
+    <link rel="stylesheet" th:href="@{/plugins/fileinput/css/fileinput.css}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link th:href="@{/plugins/cropper/cropper.min.css}" rel="stylesheet" />
+</head>
+<style>
+    img {
+        max-width: 100%;
+    }
+
+    #photo {
+        max-width: 100%;
+        max-height: 350px;
+    }
+
+    .breadcrumb {
+        width: 100%;
+        float: left;
+        font-size: 18px;
+        background-color: white;
+        padding: 20px 0 0 12px;
+    }
+
+    .right-content-main {
+        padding-top: 0;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    /*图片上传*/
+    .img-preview-box {
+        text-align: center;
+    }
+
+    .img-preview-box > div {
+        display: inline-block;;
+        margin-right: 10px;
+    }
+
+    .img-preview {
+        overflow: hidden;
+    }
+
+    .img-preview-box .img-preview-lg {
+        width: 150px;
+        height: 150px;
+    }
+
+    .img-preview-box .img-preview-md {
+        width: 100px;
+        height: 100px;
+    }
+
+    .img-preview-box .img-preview-sm {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+    /*图片上传结束*/
+
+    .user-photo-box {
+        width: 120px;
+        height: 120px;
+        text-align: center;
+        background-color: #f8f8f8;
+        border: 1px dashed #ccc;
+    }
+
+    .user-photo-box:hover{
+        cursor:pointer
+    }
+
+    .user-photo-box img{
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+
+    .user-photo-box p{
+        color: #999;
+        font-size: 16px;
+    }
+
+    .form-horizontal .form-group{
+        margin: 10px 0 30px 0;
+    }
+
+    .update-form {
+        float: left;
+        width: 100%;
+        text-align: center;
+        padding: 0 12px;
+    }
+    .form-horizontal .control-label{
+        text-align: left;
+    }
+
+    .update-form button {
+        width: 120px;
+        margin-right: 20px;
+    }
+
+    .update-label{
+        float: left;
+        width: 100px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .update-input{
+        max-width: 712px;
+        text-align: left;
+        padding: 0 34px;
+    }
+
+    .update-input input{
+        height: 44px;
+    }
+
+    .red{
+        color: #ff1800;
+    }
+
+    .hint{
+        text-align: left;
+        color: #999;
+        font-size: 16px;
+    }
+
+    #releaseHead{
+        margin-top: 0;
+    }
+
+    #createBtn{
+        width: 182px;
+        height: 44px;
+        background-color: #ff1800;
+        color: white;
+        border-radius: 0;
+        border: none;
+        font-size: 16px;
+    }
+
+    #cancelBtn{
+        width: 182px;
+        height: 44px;
+        background-color: #ddd;
+        color: #666;
+        border-radius: 0;
+        border: none;
+        font-size: 16px;
+    }
+
+    .release-photo{
+        cursor: pointer;
+    }
+
+    .input-error {
+        color: #ff1800;
+        font-weight: 700;
+    }
+
+</style>
+<body>
+<div style="width: 100%; height: 100%; min-width: 1200px; position: absolute; z-index: -1;"></div>
+<div id="app" class="container-fluid">
+    <div th:include="inc/common :: navbar3"></div>
+
+    <div class="container row main">
+            <div th:include="inc/common :: leftNav"></div>
+        <div class="right-content">
+            <div class="right-content-main">
+                <ol class="breadcrumb">
+                    <li><a href="/media/clientRelease">专辑列表</a></li>
+                    <li class="active">创建专辑</li>
+                </ol>
+                <form class="form-horizontal update-form" role="form">
+                    <div class="form-group">
+                        <label for="releaseName" class="update-label control-label"><span class="red">*</span>专辑名称
+                        </label>
+                        <div class="col-sm-10 update-input">
+                            <input type="text" class="form-control" id="releaseName" placeholder=""
+                                   v-model="releaseName"/>
+                            <p class="hint">建议用品牌/内容主题为专辑命名，如：剽悍晨读|每天6分钟共读1本好书。</p>
+                            <span class="input-error" v-html="nameError"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="releaseHead" class="update-label control-label" style="margin-top: 34px;"><span
+                                class="red">*</span>设置封面
+                        </label>
+                        <div class="col-sm-10 update-input">
+                            <div class="user-photo-box" id="releaseHead" data-toggle="modal" data-target="#changeModal">
+                                <img th:src="@{/images/create_release.png}"/>
+                                <p>上传图片</p>
+                            </div>
+                            <img class="release-photo" data-toggle="modal" data-target="#changeModal" width="120" height="120" style="display: none;" />
+                            <span class="input-error" v-html="headError"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="releaseField" class="update-label control-label"><span class="red">*</span>类型</label>
+                        <div class="col-sm-4 update-input">
+                            <select id="releaseField" class="form-control" v-model="releaseField">
+                                <option th:each="field : ${fields}" th:text="${field.value}"
+                                        th:value="${field.id}"></option>
+                            </select>
+                            <span class="input-error" v-html="fieldError"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="releaseIntro" class="update-label control-label"><span class="red">*</span>专辑简介</label>
+                        <div class="col-sm-10 update-input">
+                            <textarea id="releaseIntro" class="col-sm-12" rows="5" v-model="releaseIntro"></textarea>
+                            <span class="input-error" v-html="introError"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="releaseIntro" class="update-label control-label"></label>
+                        <div class="col-sm-10 update-input">
+                            <div class="checkbox checkbox-danger checkbox-inline">
+                                <input type="checkbox" class="styled" id="inlineCheckbox1" value="option1"
+                                       style="vertical-align:middle;" checked="checked" />
+                                <label for="inlineCheckbox1"> 我已阅读并同意 <a href="/media/open/intellectual">《知识产权协议》</a> </label>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="cancelBtn" class="btn btn-default" v-on:click="cancel">取消</button>
+                    <button id="createBtn" type="button" class="btn btn-large btn-danger" v-on:click="save">创建</button>
+                </form>
+                <div class="modal fade" id="changeModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h4 class="modal-title text-primary">
+                                    <i class="fa fa-pencil"></i>
+                                    更换头像
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <p class="tip-info text-center">
+                                    未选择图片
+                                </p>
+                                <div class="img-container hidden">
+                                    <img src="" alt="" id="photo"/>
+                                </div>
+                                <div class="img-preview-box hidden">
+                                    <span>150*150:</span>
+                                    <div class="img-preview img-preview-lg">
+                                    </div>
+                                    <span>100*100:</span>
+                                    <div class="img-preview img-preview-md">
+                                    </div>
+                                    <span>30*30:</span>
+                                    <div class="img-preview img-preview-sm">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <label class="btn btn-danger pull-left" for="photoInput">
+                                    <input type="file" class="sr-only" id="photoInput" accept="image/*"/>
+                                    <span>打开图片</span>
+                                </label>
+                                <button class="btn btn-primary disabled" disabled="true" onclick="sendPhoto();">提交
+                                </button>
+                                <button class="btn btn-close" aria-hidden="true" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div th:include="inc/common :: plugins"></div>
+</body>
+<script th:src="@{/plugins/fileinput/js/fileinput.js}"></script>
+<script th:src="@{/plugins/fileinput/js/locales/zh.js}"></script>
+<script th:src="@{/plugins/cropper/cropper.min.js}"></script>
+<script th:src="@{/js/myCropper.js}"></script>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            updateReleaseUrl: 'info',
+            uploadUrl: "publish/upload",
+            releaseName: '',
+            releaseIntro: '',
+            releaseField: '',
+            head: '',
+            nameError: '',
+            headError: '',
+            fieldError: '',
+            introError: ''
+        },
+        methods: {
+            save: function (event) {
+                //数据校验
+                if (vm.releaseName === ''){
+                    vm.nameError = '专辑名称不能为空';
+                    return;
+                }
+                if (vm.releaseName.length > 16){
+                    vm.nameError = '专辑名称不能超过16个字符';
+                    return;
+                }
+                if (vm.head === ''){
+                    vm.headError = '请选择封面';
+                    return;
+                }
+                if (vm.releaseField === ''){
+                    vm.fieldError = '请选择类型';
+                    return;
+                }
+                if (vm.releaseIntro === ''){
+                    vm.introError = '请输入专辑简介';
+                    return;
+                }
+                $.ajax({
+                    url: this.updateReleaseUrl,
+                    type: 'POST',
+                    data: {
+                        name: this.releaseName,
+                        intro: this.releaseIntro,
+                        field: this.releaseField,
+                        head: this.head
+                    },
+                    success: function (response) {
+                        var result = JSON.parse(response);
+                        if (result.code == 0) {
+                            window.location.href = "/media/clientRelease";
+                        } else {
+                            alert(result.msg);
+                        }
+                    }
+                });
+            },
+            cancel: function (event) {
+                window.location.reload();
+            },
+            openUpdateHeadModal: function (event) {
+                $("#changeModal").modal('toggle');
+            }
+        }
+    });
+
+    //提交图片
+    var sendPhoto = function () {
+        // $('#photo').cropper('getCroppedCanvas', {
+        //     width: 300,
+        //     height: 300
+        // }).toBlob(function (blob) {
+        //     // 转化为blob后更改src属性，隐藏模态框
+        //     $('#user-photo').attr('src', URL.createObjectURL(blob));
+        //     $('#changeModal').modal('hide');
+        // });
+        // 得到PNG格式的dataURL
+        var photo = $('#photo').cropper('getCroppedCanvas', {
+            width: 300,
+            height: 300
+        }).toDataURL('image/png');
+        $.ajax({
+            url: '/media/clientRelease/head', // 要上传的地址
+            type: 'post',
+            data: {
+                id: null,
+                'dataURL': photo
+            },
+            dataType: 'json',
+            success: function (result) {
+                if (result.code == 0) {
+                    var filename = JSON.parse(result.data);
+                    // 将上传的头像的地址填入，为保证不载入缓存加个随机数
+                    vm.head = filename;
+                    $('.user-photo-box').hide();
+                    $('.release-photo').show();
+                    $('.release-photo').attr('src', '/media/file?filename=' + filename + '&t=' + Math.random());
+                    $('#changeModal').modal('hide');
+                } else {
+                    alert(result.msg);
+                }
+            }
+        });
+    };
+
+    $(function () {
+        //设置头像
+        $('.user-photo').attr('src', 'clientRelease/head');
+        initCropperInModal($('#photo'), $('#photoInput'), $('#changeModal'));
+        //设置菜单
+        $('#left-nav-content').addClass('left-nav-active');
+        //勾选协议事件
+        $('#inlineCheckbox1').change(function(){
+            var isChecked = $('#inlineCheckbox1').is(':checked');
+            if (!isChecked) {
+                $('#createBtn').attr('disabled', true);
+            }else {
+                $('#createBtn').attr('disabled', false);
+            }
+        });
+    });
+
+    /* ]]> */
+</script>
+</html>

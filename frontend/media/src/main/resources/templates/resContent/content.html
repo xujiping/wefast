@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>听多多自媒体平台-音频列表</title>
+    <head th:include="inc/common :: head"></head>
+    <link rel="stylesheet" th:href="@{/plugins/fileinput/css/fileinput.css}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link th:href="@{/plugins/pagination1/css/jquery.pagination.css}" rel="stylesheet" type="text/css" />
+</head>
+<style>
+
+    .right-content-main {
+        padding-top: 0;
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .breadcrumb {
+        float: left;
+        font-size: 18px;
+        background-color: white;
+        padding: 20px 8px 0 12px;
+    }
+
+    .stat-tab {
+        height: 40px;
+        font-size: 18px;
+        text-align: right;
+    }
+
+    .stat-tab li {
+        display: inline-block;
+        padding: 20px 12px;
+    }
+
+    .stat-tab li:hover {
+        color: #ff1800;
+        cursor: pointer;
+    }
+
+    .stat-tab-active {
+        height: 67px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-bottom: none;
+    }
+
+    .content-list {
+        width: 100%;
+        float: left;
+        border-top: 1px solid #ddd;
+    }
+
+    .content-tab {
+        float: left;
+        width: 100%;
+        padding: 20px 12px 16px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .content-tab-info {
+        float: left;
+        width: 80%;
+        margin-top: 20px;
+        margin-bottom: 0;
+    }
+
+    .content-tab-info span {
+        margin-right: 30px;
+    }
+
+    a {
+        color: #00a8ff;
+    }
+
+    .content-tab img {
+        float: right;
+    }
+
+    .content-tab-title {
+        width: 80%;
+        font-size: 20px;
+        font-weight: bold;
+        color: #00a8ff;
+        margin-bottom: 0;
+    }
+
+    .content-tab-stat {
+        width: 20%;
+        float: right;
+    }
+
+    .content-tab-operate {
+        width: 20%;
+        float: right;
+        text-align: right;
+        color: #00a8ff;
+        margin-top: 20px;
+        margin-bottom: 0;
+    }
+
+    .content-tab-operate span{
+        color: #aaa;
+    }
+
+    #pagination{
+        float: left;
+        width: 100%;
+        text-align: center;
+    }
+
+    .modal-dialog{
+        margin-top: 20%;
+    }
+
+    #noContent{
+        text-align: center;
+    }
+
+    #noContent img{
+        margin: 0 auto;
+    }
+
+</style>
+<body>
+<div style="width: 100%; height: 100%; min-width: 1200px; position: absolute; z-index: -1;"></div>
+<div id="app" class="container-fluid">
+    <div th:include="inc/common :: navbar3"></div>
+
+    <div class="container row main">
+        <div th:include="inc/common :: leftNav"></div>
+        <div class="right-content">
+            <div class="right-content-main">
+                <ol class="breadcrumb">
+                    <li><a href="/media/clientRelease">专辑列表</a></li>
+                    <li class="active">音频列表</li>
+                </ol>
+                <ol class="stat-tab">
+                    <li class="stat-tab-active" v-on:click="changeStatTab(0)">全部</li>
+                    <li v-on:click="changeStatTab(1)">通过</li>
+                    <li v-on:click="changeStatTab(2)">待审核</li>
+                    <li v-on:click="changeStatTab(3)">未通过</li>
+                    <li v-on:click="changeStatTab(4)">冻结</li>
+                </ol>
+                <div class="content-list">
+                    <div class="content-tab" v-for="content in contentList">
+                        <div class="content-tab-stat">
+                            <img th:src="@{/images/content_pass.png}" v-if="content.stat === 'pass'"/>
+                            <img th:src="@{/images/content_audit.png}" v-if="content.stat === 'audit'"/>
+                            <img th:src="@{/images/content_no_pass.png}" v-if="content.stat === 'failed'"/>
+                            <img th:src="@{/images/content_block.png}" v-if="content.stat === 'block'"/>
+                        </div>
+                        <p class="content-tab-title" v-html="content.title">007章 山中有狼</p>
+                        <p class="content-tab-info"><span>类型：音频</span><span v-html="content.submitTime">2018-04-27
+                            11:21</span></p>
+                        <p class="content-tab-info">喜欢：<span v-html="content.likeCount">0</span>播放：
+                            <span v-html="content.playCount">0</span></p>
+                        <p class="content-tab-operate">
+                            <a href="javascript:;" v-bind:class="checkStat(content.stat)"
+                               v-on:click="update(content.id)">修改</a>
+                            <span v-bind:class="checkStat(content.stat)">|</span>
+                            <a href="javascript:;" v-on:click="remove(content.id)">删除</a>
+                            <span v-bind:class="checkStat(content.stat)">|</span>
+                            <a href="javascript:;" v-on:click="setTop(content.id)" v-bind:class="checkStat(content.stat)">置顶</a>
+                        </p>
+                    </div>
+                    <div id="noContent" v-if="total == 0">
+                        <img th:src="@{/images/no_img.png}" />
+                        <p>您还未上传过音频，去<a href="/media/publish">上传音频</a>吧</p>
+                    </div>
+                </div>
+                <div style="width: 100%; height: 40px; float: left"></div>
+                <div id="pagination" class="page fl"></div>
+            </div>
+        </div>
+    </div>
+    <!--修改-->
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        修改
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="firstname" class="col-sm-2 control-label">标题</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="firstname" placeholder="请输入标题"
+                                       v-model="title" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="intro" class="col-sm-2 control-label">音频简介</label>
+                            <div class="col-sm-10 add-input">
+                                <textarea id="intro" class="col-sm-12" rows="5" v-model="intro"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消
+                    </button>
+                    <button type="button" class="btn btn-primary" v-on:click="saveUpdate">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+</div>
+<div th:include="inc/common :: plugins"></div>
+</body>
+<script th:src="@{/plugins/fileinput/js/fileinput.js}"></script>
+<script th:src="@{/plugins/fileinput/js/locales/zh.js}"></script>
+<script th:src="@{/plugins/pagination1/js/jquery.pagination.min.js}"></script>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    var releaseId = [[${releaseId}]];
+    var total = [[${total}]];
+    var stats = ['all', 'pass', 'audit', 'failed', 'block'];
+
+    //vue.js初始化
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            total: total,
+            page: 1,
+            rows: 10,
+            totalPage: 1,
+            contentList: [],
+            stat: 0,
+            contentId: '',
+            title: '',
+            intro: ''
+        },
+        methods: {
+            changeStatTab: function (index){
+                setStatTab(index);
+                var url = '/media/resContent/list?page=' + 1 + "&rows=" + this.rows + "&releaseId=" + releaseId
+                    + "&stat=" + stats[index];
+                vm.$http.get(url, {emulateJSON: true}).then(function (response) {
+                    vm.contentList = JSON.parse(response.data.data);
+                    vm.total = response.data.count;
+                    initPagination(vm.total, vm.rows);
+                });
+
+                // toPage(1, stats[index]);
+            },
+            setTop: function (contentId){
+                var url = '/media/resContent/top/' + contentId;
+                vm.$http.put(url, {emulateJSON: true}).then(function (response) {
+                    window.location.reload();
+                });
+            },
+            remove: function(contentId){
+                var url = '/media/resContent/info/' + contentId;
+                vm.$http.delete(url, {emulateJSON: true}).then(function (response) {
+                    window.location.reload();
+                });
+            },
+            checkStat: function(stat){
+                return{
+                    'no-click': stat === 'block'
+                }
+            },
+            update: function(contentId){
+                $("#updateModal").modal('show');
+                var url = "/media/resContent/" + contentId;
+                vm.$http.get(url, {emulateJSON: true}).then(function (response) {
+                    var resContent = JSON.parse(response.data.data);
+                    this.contentId = resContent.id;
+                    this.title = resContent.title;
+                    this.intro = resContent.summary;
+                });
+            },
+            saveUpdate: function (){
+                var url = '/media/resContent/info';
+                var data = {
+                    contentId: this.contentId,
+                    title: this.title,
+                    summary: this.intro
+                };
+                vm.$http.put(url, data, {emulateJSON: true}).then(function (response) {
+                    window.location.reload();
+                });
+            }
+        }
+    });
+
+    function setStatTab(index){
+        $('.stat-tab li').eq(vm.stat).removeClass('stat-tab-active');
+        $('.stat-tab li').eq(index).addClass('stat-tab-active');
+        vm.stat = index;
+    }
+
+    //跳转分页
+    function toPage(newPage, stat){
+        if (stat === undefined){
+            stat = 'all';
+        }
+        var url = '/media/resContent/list?page=' + newPage + "&rows=" + vm.rows + "&releaseId=" + releaseId
+            + "&stat=" + stat;
+        vm.$http.get(url, {emulateJSON: true}).then(function (response) {
+            vm.contentList = JSON.parse(response.data.data);
+            vm.total = response.data.count;
+            setDefaultImg();
+        });
+    }
+
+    //初始化分页
+    function initPagination(total, rows){
+        var totalPage = Math.ceil(total / rows);
+        $("#pagination").pagination({
+            currentPage: 1,
+            totalPage: totalPage,
+            isShow: false,
+            count: 6,
+            prevPageText: "<",
+            nextPageText: ">",
+            callback: function(current) {
+                toPage(current, stats[vm.stat]);
+            }
+        });
+    }
+
+    $(function () {
+        //设置头像
+        $('.user-photo').attr('src', 'clientRelease/head');
+        //设置菜单
+        $('#left-nav-content').addClass('left-nav-active');
+        initPagination(vm.total, vm.rows);
+        //初始化第一页数据
+        toPage(1);
+
+    });
+
+    /* ]]> */
+</script>
+</html>

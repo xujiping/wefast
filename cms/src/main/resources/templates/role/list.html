@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>广州红黑信息技术</title>
+    <head th:include="inc/common :: head"></head>
+    <link th:href="@{/lib/bootstrap-3.3.0/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/lib/bootstrap-table-1.11.0/bootstrap-table.min.css}" rel="stylesheet"/>
+</head>
+<style>
+</style>
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">角色管理</a>
+        <a>
+          <cite>角色列表</cite></a>
+      </span>
+    <button class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+            onclick="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></button>
+</div>
+<div id="app" class="x-body">
+    <div class="layui-row">
+        <div class="layui-form layui-col-md12 x-so">
+            <input class="layui-input" placeholder="开始日" name="start" id="start" v-model="sTime"/>
+            <input class="layui-input" placeholder="截止日" name="end" id="end" v-model="eTime"/>
+            <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" class="layui-input"
+                   v-model="username"/>
+            <button id="search" class="layui-btn" v-on:click="search"><i class="layui-icon">
+                &#xe615;</i></button>
+        </div>
+    </div>
+    <xblock>
+        <!--<button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>-->
+        <!--<button class="layui-btn" onclick="x_admin_show('添加用户','/admin/add')"><i class="layui-icon"></i>添加-->
+        <!--</button>-->
+    </xblock>
+    <table id="table"></table>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:src="@{/lib/bootstrap-3.3.0/js/bootstrap.min.js}"></script>
+<script th:src="@{/lib/bootstrap-table-1.11.0/bootstrap-table.min.js}"></script>
+<script th:src="@{/lib/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            sTime: '',
+            eTime: '',
+            username: ''
+        },
+        methods: {
+            //表格高度
+            tableHeight: function () {
+                return $(window).height() - 200;
+            },
+            search: function () {
+                $table.bootstrapTable('refreshOptions', {pageNumber: 1});
+            }
+        }
+    });
+
+    //layui初始化
+    layui.use(['laydate', 'element'], function () {
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#start'
+            , done: function (value, date, endDate) {
+                vm.sTime = value;
+            }
+        });
+        laydate.render({
+            elem: '#end'
+            , done: function (value, date, endDate) {
+                vm.sTime = value;
+            }
+        });
+    });
+
+    //表格插件
+    var $table = $('#table');
+    $(function () {
+        // bootstrap table初始化
+        $table.bootstrapTable
+        ({
+            url: '/cmsRole/list',
+            height: vm.tableHeight(),
+            striped: true,
+            search: false,
+            showRefresh: false,
+            showColumns: false,
+            minimumCountColumns: 2,
+            clickToSelect: true,
+            detailView: false,
+            detailFormatter: 'detailFormatter',
+            pagination: true,
+            paginationLoop: false,
+            sidePagination: 'server',
+            silentSort: false,
+            sortName: 'title',
+            sortOrder: 'asc',
+            sortable: true,
+            smartDisplay: false,
+            escape: true,
+            searchOnEnterKey: true,
+            idField: 'id',
+            maintainSelected: true,
+            toolbar: '#toolbar',
+            columns: [
+                {field: 'ck', checkbox: true},
+                {
+                    id: '',
+                    title: '序号',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var pageNumber = $('#table').bootstrapTable('getOptions').pageNumber;
+                        var pageSize = $('#table').bootstrapTable('getOptions').pageSize;
+                        return (pageNumber - 1) * pageSize + index + 1;
+                    }
+                },
+                {
+                    field: 'name',
+                    title: '名称',
+                    align: 'center'
+                },
+                {
+                    field: 'title',
+                    title: '标题',
+                    align: 'center'
+                },
+                {
+                    field: 'description',
+                    title: '描述',
+                    align: 'center'
+                },
+                {
+                    field: 'createTime',
+                    title: '创建日期',
+                    align: 'center',
+                    formatter: function(value, row, index){
+                        return new Date(parseInt(value)).toLocaleString().replace(/:\d{1,2}$/, ' ');
+                    }
+                },
+                {
+                    field: 'updateTime',
+                    title: '最后更新时间',
+                    align: 'center',
+                    formatter: function(value, row, index){
+                        return new Date(parseInt(value)).toLocaleString().replace(/:\d{1,2}$/, ' ');
+                    }
+                },
+                {
+                    field: 'updateUser',
+                    title: '更新者',
+                    align: 'center'
+                },
+                {
+                    field: 'id',
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return '<a title="编辑" onclick="x_admin_show(\'编辑\',\'/admin/edit/' + value +
+                            '\')" href="javascript:;"><i class="layui-icon">&#xe642;</i></a>';
+                    }
+                }
+            ],
+            queryParams: function (params) {
+                var temp = {
+                    rows: params.limit,
+                    page: (params.offset / params.limit) + 1,
+                    sort: params.sort,
+                    order: params.order,
+                    username: vm.username,
+                    sTime: vm.sTime,
+                    eTime: vm.eTime
+                };
+                return temp;
+            }
+        });
+
+    });
+
+    //查询
+    function refreshAction() {
+        $table.bootstrapTable('refresh');
+    }
+
+    /*用户-停用*/
+    function member_stop(obj, id) {
+        layer.confirm('确认要停用吗？', function (index) {
+
+            if ($(obj).attr('title') == '启用') {
+
+                //发异步把用户状态进行更改
+                $(obj).attr('title', '停用')
+                $(obj).find('i').html('&#xe62f;');
+
+                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
+                layer.msg('已停用!', {icon: 5, time: 1000});
+
+            } else {
+                $(obj).attr('title', '启用')
+                $(obj).find('i').html('&#xe601;');
+
+                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
+                layer.msg('已启用!', {icon: 5, time: 1000});
+            }
+
+        });
+    }
+
+    /*用户-删除*/
+    function member_del(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            //发异步删除数据
+            $(obj).parents("tr").remove();
+            layer.msg('已删除!', {icon: 1, time: 1000});
+        });
+    }
+
+    function delAll(argument) {
+        var rows = $table.bootstrapTable('getSelections');
+        if (rows.length == 0) {
+            layer.alert("请至少选择一条记录", {icon: 6});
+        } else {
+            var ids = new Array();
+            for (var i in rows) {
+                ids.push(rows[i].id);
+            }
+            layer.confirm('确认要删除吗？', function (index) {
+                vm.$http.delete('/admin/' + ids, {emulateJSON: true}).then(function (response) {
+                    if (response.body.code == '0') {
+                        layer.msg('删除成功', {icon: 1});
+                        refreshAction();
+                    }
+                });
+
+            });
+        }
+    }
+
+    /* ]]> */
+</script>
+<script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+</body>
+
+</html>

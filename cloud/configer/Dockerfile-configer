@@ -1,0 +1,11 @@
+FROM java:8-jre
+MAINTAINER xujiping <xjpdyx@hotmail.com>
+
+VOLUME /tmp/configer
+
+ADD /target/configer-1.0-SNAPSHOT.jar /app/
+
+EXPOSE 1001
+
+ENTRYPOINT ["java", "-jar", "/app/configer-1.0-SNAPSHOT.jar"]
+

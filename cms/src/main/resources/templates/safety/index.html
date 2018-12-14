@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>欢迎页面-X-admin2.0</title>
+    <head th:include="inc/common :: head"></head>
+
+</head>
+
+<body>
+<div class="x-body" id="app">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="level" class="layui-form-label">
+                级别
+            </label>
+            <div class="layui-inline">
+                <select id="level" name="stat" lay-verify="" v-model="level">
+                    <option value="0" select="true">正常</option>
+                    <option value="1">冻结账号</option>
+                    <option value="2">警告</option>
+                    <option value="3">延迟</option>
+                    <option value="4">异常</option>
+                    <option value="5">优先</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-inline">
+                <textarea name="desc" placeholder="请输入内容" class="layui-textarea" cols="40" v-model="remark"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn" lay-filter="update" lay-submit="">
+                更新
+            </button>
+        </div>
+    </form>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    let clientListenId = [[${clientListenId}]];
+    let safety = [[${safety}]];
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            id: clientListenId,
+            level: safety.level,
+            remark: safety.remark
+        }
+    });
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        let form = layui.form
+            , layer = layui.layer;
+
+        //自定义验证规则
+        form.verify({
+            code: function (value) {
+                if (value.length < 3) {
+                    return '赚钱码不能低于3个字符';
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(update)', function (data) {
+            let url = '/safety/' + vm.id;
+            vm.level = $('#level option:selected').val();
+            vm.$http.put(url, {
+                level: vm.level,
+                remark: vm.remark
+            }, {emulateJSON:true}).then(function(response){
+                let result = response.body;
+                if (result.code === 0){
+                    layer.alert("修改成功", {icon: 6}, function () {
+                        // 获得frame索引
+                        let index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                }else{
+                    layer.alert("修改失败，请联系攻城狮", {icon: 6});
+                }
+            });
+            return false;
+        });
+
+
+    });
+
+    /* ]]> */
+</script>
+</body>
+
+</html>

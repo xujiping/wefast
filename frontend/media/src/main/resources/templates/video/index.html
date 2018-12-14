@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>听多多自媒体平台-视频</title>
+    <head th:include="inc/common :: head"></head>
+    <link rel="stylesheet" th:href="@{/plugins/fileinput/css/fileinput.css}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link th:href="@{/plugins/myPagination/myPagination.css}" rel="stylesheet" type="text/css"/>
+</head>
+<style>
+    .breadcrumb {
+        font-size: 18px;
+        background-color: white;
+        padding-top: 0;
+    }
+
+    .right-content-main {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .release-tab {
+        float: left;
+        width: 250px;
+        height: 360px;
+        margin: 20px 12px 30px;
+        -webkit-box-shadow: 0 0 10px #eee;
+        -moz-box-shadow: 0 0 10px #eee;
+        box-shadow: 0 0 10px #eee;
+        border-radius: 4px;
+    }
+
+    .release-tab-delete-icon{
+        position: fixed;
+        z-index: 999;
+    }
+
+    .release-tab-img {
+        width: 100%;
+        height: 150px;
+        border-radius: 5px;
+    }
+
+    .release-menu {
+        height: 0;
+    }
+
+    .release-menu img {
+        margin: 120px auto 0;
+        cursor: pointer;
+    }
+
+    .release-tab:hover .release-menu {
+        z-index: 1000;
+        width: 150px;
+        height: 150px;
+        background-color: rgba(0, 0, 0, 0.7);
+        opacity: 0.7;
+        margin-top: -150px;
+        text-align: center;
+    }
+
+    .release-tab:hover .release-menu img {
+        transition: margin-top 0.2s;
+        margin-top: 60px;
+    }
+
+    .release-tab-img:hover + .release-tab-title {
+        color: #ff1800;
+    }
+
+    .release-tab-follow {
+        width: 150px;
+        position: absolute;
+        height: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 0 10px;
+        margin-top: -20px;
+        background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)); /* Safari 5.1 - 6.0 */
+        background: -o-linear-gradient(right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)); /* Opera 11.1 - 12.0 */
+        background: -moz-linear-gradient(right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)); /* Firefox 3.6 - 15 */
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0)); /* 标准的语法（必须放在最后） */
+    }
+
+    .release-tab-follow img {
+        float: left;
+    }
+
+    .release-tab-follow span {
+        float: left;
+        color: #FFF;
+        margin-left: 10px;
+    }
+
+    .release-tab-title {
+        height: 48px;
+        padding: 4px 10px;
+        font-size: 16px;
+        overflow: hidden;
+    }
+
+    .release-tab-count {
+        font-size: 14px;
+        color: #999;
+    }
+
+    .release-tab-create {
+        font-size: 14px;
+        color: #999;
+        padding: 10px;
+    }
+
+    .release-tab-delete {
+        text-align: center;
+        color: red;
+    }
+
+    .release-add-border {
+        height: 250px;
+        border: 3px dashed #ddd;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .release-add-border img {
+        margin-top: 86px;
+    }
+
+    #releaseAdd {
+        cursor: pointer;
+    }
+
+    #releaseAdd button {
+        width: 100px;
+        height: 30px;
+        border-radius: 15px;
+        background-color: #eee;
+        color: #999;
+        font-size: 16px;
+        margin: 20px 25px;
+        padding: 2px 12px;
+    }
+
+    #pagination {
+        float: left;
+        width: 100%;
+        text-align: center;
+    }
+
+</style>
+<body>
+<div style="width: 100%; height: 100%; min-width: 1200px; position: absolute; z-index: -1;"></div>
+<div id="app" class="container-fluid">
+    <div th:include="inc/common :: navbar3"></div>
+
+    <div class="container row main">
+        <div th:include="inc/common :: leftNav"></div>
+        <div class="right-content">
+            <div class="right-content-main">
+                <ol class="breadcrumb">
+                    <li class="active">视频</li>
+                </ol>
+                <div class="release-tab" v-for="tab in tabList">
+                    <img class="release-tab-delete-icon" th:src="@{/images/delete.png}" v-show="tab.stat != 'block'"
+                         v-on:click="showDeleteModal(tab.id)" />
+                    <video :src="tab.url" controls="controls" width="250" height="250">
+                        您的浏览器不支持 video 标签。
+                    </video>
+                    <p class="release-tab-title" v-html="tab.title">标题</p>
+                    <p class="release-tab-create" v-show="tab.stat != 'block'">上传时间：<span v-html="tab.createTime">2018
+                        -07-03</span>
+                    </p>
+                    <p class="release-tab-head" style="display: none;" v-html="tab.headUrl"></p>
+                    <p class="release-tab-delete" v-show="tab.stat == 'block'">已冻结</p>
+                </div>
+                <div id="releaseAdd" class="release-tab" v-on:click="addRelease">
+                    <div class="release-add-border">
+                        <img th:src="@{/images/release_add.png}" width="78" height="78"/>
+                    </div>
+                </div>
+                <div style="width: 100%; height: 40px; float: left"></div>
+                <div id="pagination" class="pagination"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="margin-top: 20%;">
+            <div class="modal-content" style="width: 350px; margin: 0 auto;box-shadow: none;">
+                <div class="modal-header" style="background-color: #f0f0f0;
+                border-top-left-radius: 5px;border-top-right-radius: 5px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel" style="text-align: center;">
+                        删除视频
+                    </h4>
+                </div>
+                <div class="modal-body" style="text-align: center; padding: 30px 15px 40px">
+                    是否删除此视频？
+                </div>
+                <div class="modal-footer" style="text-align: center; border-top: none;">
+                    <button type="button" class="btn btn-default btn-small" data-dismiss="modal"
+                            style="border: none; background-color: #f0f1f3">取消
+                    </button>
+                    <button type="button" class="btn btn-danger btn-small" style="margin-left: 50px;
+                    background-color: #ff1800; border: none;" v-on:click="deleteAction">
+                        确定
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+</div>
+<div th:include="inc/common :: plugins"></div>
+</body>
+<script th:src="@{/plugins/fileinput/js/fileinput.js}"></script>
+<script th:src="@{/plugins/fileinput/js/locales/zh.js}"></script>
+<script th:src="@{/plugins/myPagination/myPagination.js}"></script>
+<script th:src="@{/js/common.js}"></script>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            page: getQueryString("page") === null ? 1 : getQueryString("page"),
+            rows: 5,
+            total: 0,
+            // baseUrl: 'http://www.tingduoduo.net:8000',
+            baseUrl: '/media/file?filename=',
+            deleteId: 0,
+            queryReleaseName: '',
+            tabList: null
+        },
+        methods: {
+            showContent: function (id) {
+                window.location.href = "info/" + id;
+            },
+            addRelease: function (event) {
+                window.location.href = "add";
+            },
+            showDeleteModal: function (id) {
+                this.deleteId = id;
+                $('#myModal').modal('show');
+            },
+            deleteAction: function () {
+                $('#myModal').modal('hide');
+                vm.$http.delete('' + vm.deleteId, {emulateJSON: true}).then(function (response) {
+                    let result = response.data;
+                    if (result.code === 0){
+                        window.location.reload();
+                    }else{
+                        alert(result.msg);
+                    }
+                });
+            },
+            modifyRelease: function (releaseId) {
+                window.location.href = "update/" + releaseId;
+            },
+            queryRelease: function () {
+                let url = 'list?page=1&rows=' + vm.rows + '&name=' + vm.queryReleaseName;
+                vm.$http.get(url, {emulateJSON: true}).then(function (response) {
+                    vm.tabList = JSON.parse(response.data.data);
+                    vm.total = response.data.count;
+                    initPagination(vm.total, vm.rows)
+                });
+            }
+        }
+    });
+
+    $(function () {
+        //设置菜单
+        $('#left-nav-video').addClass('left-nav-active');
+        //请求数据
+        let requestListUrl = "list?rows=" + vm.rows + "&page=" + vm.page;
+        vm.$http.get(requestListUrl, {emulateJSON: true}).then(function (response) {
+            vm.tabList = JSON.parse(response.data.data);
+            vm.total = response.data.count;
+            if (vm.total > 0) {
+                new Page({
+                    id: 'pagination',
+                    pageTotal: Math.ceil(vm.total / vm.rows), //必填,总页数
+                    pageAmount: vm.rows,  //每页多少条
+                    dataTotal: vm.total, //总共多少条数据
+                    curPage: vm.page, //初始页码,不填默认为1
+                    pageSize: 5, //分页个数,不填默认为5
+                    showPageTotalFlag: true, //是否显示数据统计,不填默认不显示
+                    showSkipInputFlag: true, //是否支持跳转,不填默认不显示
+                    getPage: function (page) {
+                        window.location.href = "index?&page=" + page + "&rows=" + vm.rows;
+                    }
+                })
+            }
+            setDefaultImg();
+        });
+
+    });
+
+    /* ]]> */
+</script>
+</html>

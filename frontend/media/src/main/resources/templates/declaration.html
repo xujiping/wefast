@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>听多多自媒体平台-登录</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+<style>
+</style>
+<body>
+<div style="width: 100%; height: 100%; min-width: 1200px; position: absolute; z-index: -1;"></div>
+<div class="container-fluid main">
+    <div th:include="inc/common :: navbar2"></div>
+
+    <div class="container paper">
+        <p class="paper-title" style="font-size: 24px; margin-bottom: 0;">
+            免责申明
+        </p>
+        <div style="width: 100%; height: 1px; border-bottom: 1px solid #ff1800; margin: 16px 0;"></div>
+        <div class="paper-text">
+            <p>
+                欢迎使用听多多自媒体平台。听多多自媒体平台由广州红黑信息技术有限公司（“红黑技术”）开发并发布。如果您使用听多多自媒体平台，表明您已经认真阅读、完全理解并同意遵守本免责声明。
+            </p>
+            <p>
+                听多多自媒体平台系根据用户指令提供作品上载、传播的信息网络存储空间。对任何由于用户使用听多多自媒体平台而侵害名誉权、肖像权、知识产权、商业秘密等合法权利权益以及其所造成的各种损失，听多多自媒体平台概不负责，亦不承担任何法律责任。
+            </p>
+            <p>
+                听多多自媒体平台中的所有用户上载、传播的内容并不代表听多多自媒体平台的意见或观点。
+            </p>
+        </div>
+    </div>
+</div>
+<div th:include="inc/common :: plugins"></div>
+</body>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    $(function () {
+        setNavtab();
+    });
+
+    /* ]]> */
+</script>
+</html>

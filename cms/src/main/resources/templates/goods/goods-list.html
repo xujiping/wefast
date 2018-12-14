@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>欢迎页面-X-admin2.0</title>
+    <head th:include="inc/common :: head"></head>
+    <link th:href="@{/lib/bootstrap-3.3.0/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/lib/bootstrap-table-1.11.0/bootstrap-table.min.css}" rel="stylesheet"/>
+</head>
+<style>
+</style>
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">商品管理</a>
+        <a>
+          <cite>商品列表</cite></a>
+      </span>
+    <button class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+            onclick="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></button>
+</div>
+<div id="app" class="x-body">
+    <div class="layui-row">
+        <div class="layui-form layui-col-md12 x-so">
+            <!--<input class="layui-input" placeholder="开始日" name="start" id="start" v-model="sTime"/>-->
+            <!--<input class="layui-input" placeholder="截止日" name="end" id="end" v-model="eTime"/>-->
+            <input type="text" name="name" placeholder="请输入商品名" autocomplete="off" class="layui-input"
+                   v-model="name"/>
+            <button id="reset" class="layui-btn" v-on:click="reset()"><i class="layui-icon">
+                &#x1006;</i></button>
+            <button id="search" class="layui-btn" v-on:click="search"><i class="layui-icon">
+                &#xe615;</i></button>
+        </div>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon">&#xe640;</i>批量删除</button>
+        <button class="layui-btn" onclick="x_admin_show('新增商品','/mallGoods')"><i class="layui-icon">&#xe654;</i>添加
+        </button>
+    </xblock>
+    <table id="table"></table>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:src="@{/lib/bootstrap-3.3.0/js/bootstrap.min.js}"></script>
+<script th:src="@{/lib/bootstrap-table-1.11.0/bootstrap-table.min.js}"></script>
+<script th:src="@{/lib/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js}"></script>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            sTime: '',
+            eTime: '',
+            name: ''
+        },
+        methods: {
+            //表格高度
+            tableHeight: function () {
+                return $(window).height() - 200;
+            },
+            search: function () {
+                $table.bootstrapTable('refreshOptions', {pageNumber: 1});
+            },
+            reset: function () {
+                console.log("重置");
+                this.sTime = '';
+                this.eTime = '';
+                this.name = '';
+            }
+        }
+    });
+
+    //layui初始化
+    layui.use(['laydate', 'element'], function () {
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#start'
+            , done: function (value, date, endDate) {
+                vm.sTime = value;
+            }
+        });
+        laydate.render({
+            elem: '#end'
+            , done: function (value, date, endDate) {
+                vm.sTime = value;
+            }
+        });
+    });
+
+    //表格插件
+    var $table = $('#table');
+    $(function () {
+        // bootstrap table初始化
+        $table.bootstrapTable
+        ({
+            url: '/mallGoods/goods',
+            height: vm.tableHeight(),
+            striped: true,
+            search: false,
+            showRefresh: false,
+            showColumns: false,
+            minimumCountColumns: 2,
+            clickToSelect: true,
+            detailView: false,
+            detailFormatter: 'detailFormatter',
+            pagination: true,
+            paginationLoop: false,
+            sidePagination: 'server',
+            silentSort: false,
+            sortName: 'name',
+            sortOrder: 'asc',
+            sortable: true,
+            smartDisplay: false,
+            escape: true,
+            searchOnEnterKey: true,
+            idField: 'id',
+            maintainSelected: true,
+            toolbar: '#toolbar',
+            columns: [
+                {field: 'ck', checkbox: true},
+                {
+                    id: '',
+                    title: '序号',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var pageNumber = $('#table').bootstrapTable('getOptions').pageNumber;
+                        var pageSize = $('#table').bootstrapTable('getOptions').pageSize;
+                        return (pageNumber - 1) * pageSize + index + 1;
+                    }
+                },
+                {
+                    field: 'name',
+                    title: '商品名称',
+                    align: 'center'
+                },
+                {
+                    field: 'seller',
+                    title: '卖家',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (value == '' || value == null) {
+                            return "自营";
+                        }
+                    }
+                },
+                {
+                    field: 'spu',
+                    title: 'SPU销量',
+                    align: 'center'
+                },
+                {
+                    field: 'category',
+                    title: '类别',
+                    align: 'center'
+                },
+                {
+                    field: 'commentCount',
+                    title: '评论数',
+                    align: 'center'
+                },
+                {
+                    field: 'id',
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return '<a title="编辑" onclick="x_admin_show(\'编辑\',\'/mallGoods/edit/' + value +
+                            '\')" href="javascript:;"><i class="layui-icon">&#xe642;</i></a>' +
+                            '<a title="详情" onclick="x_admin_show(\'商品详情\',\'/mallGoods/detail/' + value +
+                            '\')" href="javascript:;"><i class="layui-icon">&#xe615;</i></a>';
+                    }
+                }
+            ],
+            queryParams: function (params) {
+                var temp = {
+                    rows: params.limit,
+                    page: (params.offset / params.limit) + 1,
+                    sort: params.sort,
+                    order: params.order,
+                    name: vm.name
+                };
+                return temp;
+            }
+        });
+
+    });
+
+    //查询
+    function refreshAction() {
+        $table.bootstrapTable('refresh');
+    }
+
+    function delAll(argument) {
+
+        var data = tableCheck.getData();
+
+        layer.confirm('确认要删除吗？' + data, function (index) {
+            //捉到所有被选中的，发异步进行删除
+            layer.msg('删除成功', {icon: 1});
+            $(".layui-form-checked").not('.header').parents('tr').remove();
+        });
+    }
+
+    /* ]]> */
+</script>
+<script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+</body>
+
+</html>

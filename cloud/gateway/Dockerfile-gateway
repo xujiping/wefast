@@ -1,0 +1,10 @@
+FROM java:8
+
+VOLUME /tmp/gateway
+
+ADD /target/gateway-1.0-SNAPSHOT.jar /app/
+
+EXPOSE 1002
+
+ENTRYPOINT ["java", "-jar", "/app/gateway-1.0-SNAPSHOT.jar"]
+

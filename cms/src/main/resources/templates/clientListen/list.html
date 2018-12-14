@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>广州红黑信息技术</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+<style>
+</style>
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">听多多</a>
+        <a>
+          <cite>用户列表</cite></a>
+      </span>
+    <button class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+            onclick="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></button>
+</div>
+<div id="app" class="x-body">
+    <div class="layui-row">
+        <div class="layui-form layui-col-md12 x-so">
+            <!--<input class="layui-input" placeholder="开始日" name="start" id="start" v-model="sTime"/>-->
+            <!--<input class="layui-input" placeholder="截止日" name="end" id="end" v-model="eTime"/>-->
+            <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" class="layui-input"
+                   v-model="username"/>
+            <input type="text" name="nickName" placeholder="请输入昵称" autocomplete="off" class="layui-input"
+                   v-model="nickName"/>
+            <button id="reset" class="layui-btn" v-on:click="resetAction()"><i class="layui-icon">
+                &#xe640;</i></button>
+            <button id="search" class="layui-btn" v-on:click="search()"><i class="layui-icon">
+                &#xe615;</i></button>
+        </div>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="changeStat('block')"><i class="layui-icon"></i>冻结
+        </button>
+    </xblock>
+    <table id="table"></table>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            sTime: '',
+            eTime: '',
+            username: '',
+            nickName: ''
+        },
+        methods: {
+            //表格高度
+            tableHeight: function () {
+                return $(window).height() - 200;
+            },
+            search: function () {
+                $table.bootstrapTable('refreshOptions', {pageNumber: 1});
+            },
+            resetAction: function () {
+                this.username = '';
+                this.nickName = '';
+            }
+        }
+    });
+
+    //layui初始化
+    layui.use(['laydate', 'element'], function () {
+        let laydate = layui.laydate;
+        laydate.render({
+            elem: '#start'
+            , done: function (value, date, endDate) {
+                vm.sTime = value;
+            }
+        });
+        laydate.render({
+            elem: '#end'
+            , done: function (value, date, endDate) {
+                vm.sTime = value;
+            }
+        });
+    });
+    //表格插件
+    let $table = $('#table');
+    $(function () {
+        // bootstrap table初始化
+        $table.bootstrapTable
+        ({
+            url: '/clientListen/list',
+            striped: true,
+            search: false,
+            showRefresh: false,
+            showColumns: false,
+            minimumCountColumns: 2,
+            clickToSelect: true,
+            detailView: false,
+            detailFormatter: 'detailFormatter',
+            pagination: true,
+            paginationLoop: false,
+            sidePagination: 'server',
+            silentSort: false,
+            sortName: 'create_time',
+            sortOrder: 'desc',
+            sortable: true,
+            smartDisplay: false,
+            escape: true,
+            searchOnEnterKey: true,
+            idField: 'id',
+            maintainSelected: true,
+            toolbar: '#toolbar',
+            columns: [
+                {field: 'ck', checkbox: true},
+                {
+                    id: '',
+                    title: '序号',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        let pageNumber = $table.bootstrapTable('getOptions').pageNumber;
+                        let pageSize = $table.bootstrapTable('getOptions').pageSize;
+                        return (pageNumber - 1) * pageSize + index + 1;
+                    }
+                },
+                {
+                    field: 'username',
+                    title: '用户名',
+                    align: 'center'
+                },
+                {
+                    field: 'name',
+                    title: '昵称',
+                    align: 'center'
+                },
+                {
+                    field: 'currentGold',
+                    title: '可用金币',
+                    align: 'center'
+                },
+                {
+                    field: 'friendCounts',
+                    title: '徒弟',
+                    align: 'center'
+                },
+                {
+                    field: 'inviterUserName',
+                    title: '师傅',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        let result = '';
+                        if (value != null) {
+                            let a = value.split("||");
+                            result = '<p>' + a[0] + '</p>';
+                            if (value.indexOf("1级") !== -1) {
+                                result += '<span class="level-1">冻结：</span><span>' + a[2] + '</span>';
+                            } else if (value.indexOf("2级") !== -1) {
+                                result += '<span class="level-2">警告：</span><span>' + a[2] + '</span>';
+                            } else if (value.indexOf("3级") !== -1) {
+                                result += '<span class="level-3">延迟：</span><span>' + a[2] + '</span>';
+                            } else if (value.indexOf("4级") !== -1) {
+                                result += '<span class="level-4">异常：</span><span>' + a[2] + '</span>';
+                            } else if (value.indexOf("5级") !== -1) {
+                                result += '<span class="level-5">优先：</span><span>' + a[2] + '</span>';
+                            }
+                        }
+                        return result;
+                    }
+                },
+                // {
+                //     field: 'listenCounts',
+                //     title: '收听音频数',
+                //     align: 'center'
+                // },
+                {
+                    field: 'createTime',
+                    title: '注册时间',
+                    align: 'center',
+                    sortable: true
+                },
+                {
+                    field: 'invitationCode',
+                    title: '邀请码',
+                    align: 'center'
+                },
+                {
+                    field: 'lastLoginTime',
+                    title: '最近登录',
+                    align: 'center'
+                },
+                {
+                    field: 'device',
+                    title: '设备',
+                    align: 'center'
+                },
+                {
+                    field: 'stat',
+                    title: '状态',
+                    align: 'center',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value === "normal") {
+                            return '<span class="label label-info">正常</span>';
+                        } else if (value === "audit") {
+                            return '<span class="label label-default">待审核</span>';
+                        } else if (value === "pass") {
+                            return '<span class="label label-success">通过</span>';
+                        } else if (value === "failed") {
+                            return '<span class="label label-warning">未通过</span>';
+                        } else if (value === "block") {
+                            return '<span class="label label-danger">冻结</span>';
+                        }
+                    }
+                },
+                {
+                    field: 'id',
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return '<a class="table-operation" title="奖励" onclick="x_admin_show(\'奖励\', \'/clientListen/wealDetail/' +
+                            value + '\')" href="javascript:;"><i class="layui-icon">&#xe65e;</i></a>' +
+                            '<a class="table-operation" title="徒弟" onclick="x_admin_show(\'徒弟\',\'/friend/' +
+                            value + '\')" href="javascript:;"><i class="layui-icon">&#xe612;</i></a>' +
+                            '<a class="table-operation" title="编辑" onclick="x_admin_show(\'编辑\',\'/clientListen/edit/' + value +
+                            '\')" href="javascript:;"><i class="layui-icon">&#xe642;</i></a>' +
+                            '<a class="table-operation" title="标记危险" onclick="x_admin_show(\'标记危险\',\'/safety/' +
+                            value + '\')" href="javascript:;"><i class="layui-icon">&#xe667;</i></a>';
+                    }
+                }
+            ],
+            queryParams: function (params) {
+                return {
+                    rows: params.limit,
+                    page: (params.offset / params.limit) + 1,
+                    sort: params.sort,
+                    order: params.order,
+                    username: vm.username,
+                    nickName: vm.nickName,
+                    sTime: vm.sTime,
+                    eTime: vm.eTime
+                };
+            }
+        });
+
+    });
+
+    /*用户-停用*/
+    function member_stop(obj, id) {
+        layer.confirm('确认要停用吗？', function (index) {
+
+            if ($(obj).attr('title') === '启用') {
+
+                //发异步把用户状态进行更改
+                $(obj).attr('title', '停用')
+                $(obj).find('i').html('&#xe62f;');
+
+                $(obj).parents("tr").find(".td-status").find('span').addClass('layui-btn-disabled').html('已停用');
+                layer.msg('已停用!', {icon: 5, time: 1000});
+
+            } else {
+                $(obj).attr('title', '启用')
+                $(obj).find('i').html('&#xe601;');
+
+                $(obj).parents("tr").find(".td-status").find('span').removeClass('layui-btn-disabled').html('已启用');
+                layer.msg('已启用!', {icon: 5, time: 1000});
+            }
+
+        });
+    }
+
+    /*用户-删除*/
+    function member_del(obj, id) {
+        layer.confirm('确认要删除吗？', function (index) {
+            //发异步删除数据
+            $(obj).parents("tr").remove();
+            layer.msg('已删除!', {icon: 1, time: 1000});
+        });
+    }
+
+    function changeStat(stat) {
+        let rows = $table.bootstrapTable('getSelections');
+        if (rows.length === 0) {
+            layer.alert("请至少选择一条记录", {icon: 6});
+        } else {
+            let ids = [];
+            for (let i in rows) {
+                if (rows.hasOwnProperty(i)) {
+                    ids.push(rows[i].id);
+                }
+            }
+            layer.confirm('确认要冻结吗？', function (index) {
+                vm.$http.put('/clientListen/stat/' + ids, {
+                    stat: stat
+                }, {emulateJSON: true}).then(function (response) {
+                    let result = response.body;
+                    if (result.code === 0) {
+                        layer.msg('操作成功', {icon: 1});
+                        refreshAction();
+                    } else {
+                        layer.msg(result.msg, {icon: 2});
+                    }
+                });
+
+            });
+        }
+    }
+
+    /* ]]> */
+</script>
+</body>
+
+</html>

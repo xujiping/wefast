@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>欢迎页面-X-admin2.0</title>
+    <head th:include="inc/common :: head"></head>
+
+</head>
+
+<body>
+<div class="x-body" id="app">
+    <p th:text="${event.formattedMessage}"></p>
+    <p th:each="detail : ${exceptions}" th:if="${detail.i eq 0}">
+        <span th:text="${detail.traceLine}"></span>
+    </p>
+    <p class="line" th:each="detail : ${exceptions}" th:if="${detail.i ne 0}">
+        <span th:text="${detail.traceLine}"></span>
+    </p>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+        }
+    });
+
+    /* ]]> */
+</script>
+</body>
+
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml" lang="zh-cn">
+<head>
+    <title>广州红黑信息技术</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+<style>
+</style>
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">听多多</a>
+        <a>
+          <cite>Redis列表</cite></a>
+      </span>
+    <button class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+            onclick="location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></button>
+</div>
+<div id="app" class="x-body">
+    <div class="layui-row">
+        <div class="layui-form layui-col-md12 x-so">
+            <div class="layui-inline">
+                <select id="type" name="type" lay-verify="">
+                    <option value="" select="true">所有</option>
+                    <option value="client_id_username">客户端用户名</option>
+                    <option value="client_username_entity">客户端用户信息</option>
+                    <option value="user_token_">客户端用户token信息</option>
+                    <option value="set_field">redis类别信息</option>
+                    <option value="client_release">redis专辑信息</option>
+                    <option value="client_listen_like_content">redis用户喜欢的音频</option>
+                    <option value="client_time_award_">用户整点时间奖励</option>
+                    <option value="client_comment_like_award_">用户评论点赞奖励</option>
+                    <option value="content_comment_count">音频评论数量</option>
+                    <option value="login_code_error_">登录验证码错误</option>
+                    <option value="generate_code">生成码</option>
+                    <option value="invitation_code">生成邀请码自增</option>
+                    <option value="exist_invitation_code">已存在的邀请码</option>
+                    <option value="wake_up_">用户正在被唤醒</option>
+                    <option value="back_gold_">回归金币</option>
+                    <option value="listen_online_">用户最后上线时间</option>
+                    <option value="wx_jsapi_ticket">微信js签名</option>
+                    <option value="invitee_today_contribution_">被邀请人今日贡献</option>
+                    <option value="statistical_">统计信息</option>
+                    <option value="get_red_packet">通过邀请好友页面领取红包</option>
+                    <option value="type_content_ids_">类别的音频ID列表</option>
+                    <option value="game_limit_">用户玩游戏限制</option>
+                    <option value="login_day_">连续登录天数</option>
+                </select>
+            </div>
+            <input type="text" name="key" placeholder="请输入key" autocomplete="off" class="layui-input"
+                   v-model="key"/>
+            <input type="text" name="hashKey" placeholder="请输入hashKey" autocomplete="off" class="layui-input"
+                   v-model="hashKey"/>
+            <button id="reset" class="layui-btn" v-on:click="resetAction()"><i class="layui-icon">
+                &#xe640;</i></button>
+            <button id="search" class="layui-btn" v-on:click="search()"><i class="layui-icon">
+                &#xe615;</i></button>
+        </div>
+    </div>
+    <xblock>
+        测试
+    </xblock>
+    <table id="table"></table>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            key: '',
+            hashKey:''
+        },
+        methods: {
+            search: function () {
+                $table.bootstrapTable('refreshOptions', {pageNumber: 1});
+            },
+            resetAction: function () {
+                this.key = '';
+                this.hashKey = '';
+            }
+        }
+    });
+
+    //表格插件
+    let $table = $('#table');
+    $(function () {
+        // bootstrap table初始化
+        $table.bootstrapTable
+        ({
+            url: '/redis/list',
+            // height: setTableHeight(),
+            striped: true,
+            search: false,
+            showRefresh: false,
+            showColumns: false,
+            minimumCountColumns: 2,
+            clickToSelect: true,
+            detailView: false,
+            detailFormatter: 'detailFormatter',
+            pagination: false,
+            paginationLoop: false,
+            sidePagination: 'server',
+            silentSort: false,
+            sortName: 'create_time',
+            sortOrder: 'desc',
+            sortable: true,
+            smartDisplay: false,
+            escape: true,
+            searchOnEnterKey: true,
+            idField: 'id',
+            maintainSelected: true,
+            toolbar: '#toolbar',
+            columns: [
+                {field: 'ck', checkbox: true},
+                {
+                    id: '',
+                    title: '序号',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        let pageNumber = $table.bootstrapTable('getOptions').pageNumber;
+                        let pageSize = $table.bootstrapTable('getOptions').pageSize;
+                        return (pageNumber - 1) * pageSize + index + 1;
+                    }
+                },
+                {
+                    field: 'key',
+                    title: 'key',
+                    align: 'center'
+                },
+                {
+                    field: 'hashKey',
+                    title: 'hashKey',
+                    align: 'center'
+                },
+                {
+                    field: 'value',
+                    title: 'value',
+                    align: 'center'
+                },
+                {
+                    field: 'value',
+                    title: '操作',
+                    align: 'center'
+                },
+            ],
+            queryParams: function (params) {
+                return {
+                    rows: params.limit,
+                    page: (params.offset / params.limit) + 1,
+                    sort: params.sort,
+                    order: params.order,
+                    key: vm.key,
+                    hashKey: vm.hashKey,
+                    type: $('#type option:selected').val()
+                };
+            }
+        });
+
+    });
+
+    /* ]]> */
+</script>
+</body>
+
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>听多多自媒体平台-个人信息</title>
+    <head th:include="inc/common :: head"></head>
+    <link rel="stylesheet" th:href="@{/plugins/fileinput/css/fileinput.css}"/>
+    <link type="text/css" rel="stylesheet" th:href="@{/css/home.css}"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropper/3.1.5/cropper.min.css" rel="stylesheet" />
+</head>
+<style>
+    img {
+        max-width: 100%;
+    }
+
+    .right-content-main {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .breadcrumb {
+        font-size: 18px;
+        background-color: white;
+        padding: 0 12px;
+    }
+
+    .form-horizontal .form-group{
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    #photo {
+        max-width: 100%;
+        max-height: 350px;
+    }
+
+    .img-preview-box {
+        text-align: center;
+    }
+
+    .img-preview-box > div {
+        display: inline-block;;
+        margin-right: 10px;
+    }
+
+    .img-preview {
+        overflow: hidden;
+    }
+
+    .img-preview-box .img-preview-lg {
+        width: 150px;
+        height: 150px;
+    }
+
+    .img-preview-box .img-preview-md {
+        width: 100px;
+        height: 100px;
+    }
+
+    .img-preview-box .img-preview-sm {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+
+    .user-photo-box {
+        text-align: center;
+    }
+
+    .form-group {
+        margin: 10px 0;
+    }
+
+    .update-form {
+        text-align: center;
+        padding: 0 12px;
+    }
+
+    .form-horizontal .control-label{
+        text-align: left;
+    }
+
+    .update-form button {
+        width: 120px;
+        margin-right: 20px;
+    }
+
+    .update-label{
+        float: left;
+        width: 100px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .update-input{
+        max-width: 712px;
+        text-align: left;
+        padding: 0 34px;
+    }
+
+</style>
+<body>
+<div style="width: 100%; height: 100%; min-width: 1200px; position: absolute; z-index: -1;"></div>
+<div id="app" class="container-fluid">
+    <div th:include="inc/common :: navbar3"></div>
+
+    <div class="container row main">
+            <div th:include="inc/common :: leftNav"></div>
+        <div class="right-content">
+            <div class="right-content-main">
+                <ol class="breadcrumb">
+                    <li class="active">个人信息</li>
+                </ol>
+                <form class="form-horizontal update-form" role="form">
+                    <div class="form-group">
+                        <label for="releaseHead" class="update-label control-label">个人头像</label>
+                        <div class="col-sm-10">
+                            <div class="user-photo-box">
+                                <img id="releaseHead" class="user-photo" width="100" height="100"
+                                     v-on:click="openUpdateHeadModal"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="releaseName" class="update-label control-label">个人昵称</label>
+                        <div class="col-sm-10 update-input">
+                            <input type="text" class="form-control" id="releaseName" placeholder=""
+                                   v-model="releaseName"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="releaseField" class="update-label control-label">生日</label>
+                        <div class="col-sm-4 update-input">
+                            <select id="releaseField" class="form-control" v-model="releaseField">
+                                <option th:each="field : ${fields}" th:text="${field.value}"
+                                        th:value="${field.id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <!--<div class="form-group">-->
+                        <!--<label for="releaseIntro" class="update-label control-label">个人简介</label>-->
+                        <!--<div class="col-sm-10 update-input">-->
+                            <!--<textarea id="releaseIntro" class="col-sm-12" rows="5" v-model="releaseIntro"></textarea>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                    <button class="btn btn-default" v-on:click="cancel">取消</button>
+                    <button type="button" class="btn btn-large btn-danger" v-on:click="save">保存</button>
+                </form>
+                <div class="modal fade" id="changeModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h4 class="modal-title text-primary">
+                                    <i class="fa fa-pencil"></i>
+                                    更换头像
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                <p class="tip-info text-center">
+                                    未选择图片
+                                </p>
+                                <div class="img-container hidden">
+                                    <img src="" alt="" id="photo"/>
+                                </div>
+                                <div class="img-preview-box hidden">
+                                    <span>150*150:</span>
+                                    <div class="img-preview img-preview-lg">
+                                    </div>
+                                    <span>100*100:</span>
+                                    <div class="img-preview img-preview-md">
+                                    </div>
+                                    <span>30*30:</span>
+                                    <div class="img-preview img-preview-sm">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <label class="btn btn-danger pull-left" for="photoInput">
+                                    <input type="file" class="sr-only" id="photoInput" accept="image/*"/>
+                                    <span>打开图片</span>
+                                </label>
+                                <button class="btn btn-primary disabled" disabled="true" onclick="sendPhoto();">提交
+                                </button>
+                                <button class="btn btn-close" aria-hidden="true" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div th:include="inc/common :: plugins"></div>
+</body>
+<script th:src="@{/plugins/fileinput/js/fileinput.js}"></script>
+<script th:src="@{/plugins/fileinput/js/locales/zh.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/3.1.5/cropper.min.js"></script>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    var curListen = [[${curListen}]];
+
+    //vue.js初始化
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            updateReleaseUrl: 'clientRelease/info',
+            uploadUrl: "publish/upload",
+            releaseName: curListen.name,
+            releaseField: curListen.field,
+        },
+        methods: {
+            save: function (event) {
+                $.ajax({
+                    url: this.updateReleaseUrl,
+                    type: 'PUT',
+                    data: {
+                        releaseUsername: curListen.username,
+                        name: this.releaseName,
+                        intro: this.releaseIntro,
+                        field: this.releaseField
+                    },
+                    success: function (response) {
+                        var result = JSON.parse(response);
+                        if (result.code == 0) {
+                            window.location.reload();
+                        } else {
+                            alert(result.msg);
+                        }
+                    }
+                });
+            },
+            cancel: function (event) {
+                window.location.reload();
+            },
+            openUpdateHeadModal: function (event) {
+                $("#changeModal").modal('toggle');
+            }
+        }
+    });
+
+    var initCropperInModal = function (img, input, modal) {
+        var $image = img;
+        var $inputImage = input;
+        var $modal = modal;
+        var options = {
+            aspectRatio: 1, // 纵横比
+            viewMode: 1,
+            dragMode: 'move',
+            preview: '.img-preview' // 预览图的class名
+        };
+        // 模态框隐藏后需要保存的数据对象
+        var saveData = {};
+        var URL = window.URL || window.webkitURL;
+        var blobURL;
+        $modal.on('show.bs.modal', function () {
+            // 如果打开模态框时没有选择文件就点击“打开图片”按钮
+            if (!$inputImage.val()) {
+                $inputImage.click();
+            }
+        }).on('shown.bs.modal', function () {
+            // 重新创建
+            $image.cropper($.extend(options, {
+                ready: function () {
+                    // 当剪切界面就绪后，恢复数据
+                    if (saveData.canvasData) {
+                        $image.cropper('setCanvasData', saveData.canvasData);
+                        $image.cropper('setCropBoxData', saveData.cropBoxData);
+                    }
+                }
+            }));
+        }).on('hidden.bs.modal', function () {
+            // 保存相关数据
+            saveData.cropBoxData = $image.cropper('getCropBoxData');
+            saveData.canvasData = $image.cropper('getCanvasData');
+            // 销毁并将图片保存在img标签
+            $image.cropper('destroy').attr('src', blobURL);
+        });
+        if (URL) {
+            $inputImage.change(function () {
+                var files = this.files;
+                var file;
+                if (!$image.data('cropper')) {
+                    return;
+                }
+                if (files && files.length) {
+                    file = files[0];
+                    if (/^image\/\w+$/.test(file.type)) {
+
+                        if (blobURL) {
+                            URL.revokeObjectURL(blobURL);
+                        }
+                        blobURL = URL.createObjectURL(file);
+
+                        // 重置cropper，将图像替换
+                        $image.cropper('reset').cropper('replace', blobURL);
+
+                        // 选择文件后，显示和隐藏相关内容
+                        $('.img-container').removeClass('hidden');
+                        $('.img-preview-box').removeClass('hidden');
+                        $('#changeModal .disabled').removeAttr('disabled').removeClass('disabled');
+                        $('#changeModal .tip-info').addClass('hidden');
+
+                    } else {
+                        window.alert('请选择一个图像文件！');
+                    }
+                }
+            });
+        } else {
+            $inputImage.prop('disabled', true).addClass('disabled');
+        }
+    }
+
+    //提交图片
+    var sendPhoto = function () {
+        // $('#photo').cropper('getCroppedCanvas', {
+        //     width: 300,
+        //     height: 300
+        // }).toBlob(function (blob) {
+        //     // 转化为blob后更改src属性，隐藏模态框
+        //     $('#user-photo').attr('src', URL.createObjectURL(blob));
+        //     $('#changeModal').modal('hide');
+        // });
+        // 得到PNG格式的dataURL
+        var photo = $('#photo').cropper('getCroppedCanvas', {
+            width: 300,
+            height: 300
+        }).toDataURL('image/png');
+        $.ajax({
+            url: 'clientRelease/head', // 要上传的地址
+            type: 'post',
+            data: {
+                'dataURL': photo,
+                'releaseUsername': curListen.username
+            },
+            dataType: 'json',
+            success: function (result) {
+                if (result.code == 0) {
+                    var filename = JSON.parse(result.data);
+                    // 将上传的头像的地址填入，为保证不载入缓存加个随机数
+                    $('.user-photo').attr('src', 'file?filename=' + filename + '&t=' + Math.random());
+                    $('#changeModal').modal('hide');
+                } else {
+                    alert(result.msg);
+                }
+            }
+        });
+    };
+
+    $(function () {
+        //设置头像
+        $('.user-photo').attr('src', 'clientRelease/head');
+        initCropperInModal($('#photo'), $('#photoInput'), $('#changeModal'));
+        //设置菜单
+        $('#left-nav-account').addClass('left-nav-active');
+    });
+
+    /* ]]> */
+</script>
+</html>

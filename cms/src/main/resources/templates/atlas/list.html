@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml" lang="zh-cn">
+<head>
+    <title>广州红黑信息技术</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+<style>
+    .atlas_imags {
+        display: inline-block;
+    }
+</style>
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">听多多</a>
+        <a>
+          <cite>图集列表</cite></a>
+      </span>
+    <button class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+            onclick="location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></button>
+</div>
+<div id="app" class="x-body">
+    <div class="layui-row">
+        <div class="layui-form layui-col-md12 x-so">
+            <div class="layui-inline">
+                <select id="stat" name="stat" lay-verify="">
+                    <option value="">不限</option>
+                    <!--<option value="normal">正常</option>-->
+                    <option value="pass">通过</option>
+                    <option value="audit" selected="selected">待审核</option>
+                    <option value="failed">未通过</option>
+                    <option value="block">冻结</option>
+                </select>
+            </div>
+            <button id="reset" class="layui-btn" v-on:click="resetAction()"><i class="layui-icon">
+                &#xe640;</i></button>
+            <button id="search" class="layui-btn" v-on:click="search()"><i class="layui-icon">
+                &#xe615;</i></button>
+        </div>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="changeStat('failed')"><i class="layui-icon"></i>不通过
+        </button>
+        <button class="layui-btn layui-btn" onclick="changeStat('pass')"><i class="layui-icon">&#xe605;</i>通过</button>
+    </xblock>
+    <table id="table"></table>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {},
+        methods: {
+            search: function () {
+                $table.bootstrapTable('refreshOptions', {pageNumber: 1});
+            },
+            resetAction: function () {
+                测试
+            }
+        }
+    });
+
+    function changeStat(stat) {
+        let confirmTitle = "确认审核通过吗？";
+        if (stat === 'failed') {
+            confirmTitle = "确认审核不通过吗？"
+        }
+        let rows = $table.bootstrapTable('getSelections');
+        if (rows.length === 0) {
+            layer.alert("请至少选择一条记录", {icon: 6});
+        } else {
+            let ids = [];
+            for (let i in rows) {
+                if (rows.hasOwnProperty(i)) {
+                    ids.push(rows[i].id);
+                }
+            }
+            layer.confirm(confirmTitle, function (index) {
+                vm.$http.put('/atlas/stat/' + ids, {
+                    stat: stat
+                }, {emulateJSON: true}).then(function (response) {
+                    let result = response.body;
+                    if (result.code === 0) {
+                        layer.msg('操作成功', {icon: 1});
+                        vm.search();
+                    } else {
+                        layer.msg(result.msg, {icon: 2});
+                    }
+                });
+
+            });
+        }
+    }
+
+    //表格插件
+    let $table = $('#table');
+    $(function () {
+        // bootstrap table初始化
+        $table.bootstrapTable
+        ({
+            url: '/atlas/list',
+            striped: true,
+            search: false,
+            showRefresh: false,
+            showColumns: false,
+            minimumCountColumns: 2,
+            clickToSelect: true,
+            detailView: false,
+            detailFormatter: 'detailFormatter',
+            pagination: true,
+            paginationLoop: false,
+            sidePagination: 'server',
+            silentSort: false,
+            sortName: 'create_time',
+            sortOrder: 'asc',
+            sortable: true,
+            smartDisplay: false,
+            escape: true,
+            searchOnEnterKey: true,
+            idField: 'id',
+            maintainSelected: true,
+            toolbar: '#toolbar',
+            columns: [
+                {field: 'ck', checkbox: true},
+                {
+                    id: '',
+                    title: '序号',
+                    align: 'center',
+                    width: 50,
+                    formatter: function (value, row, index) {
+                        var pageNumber = $table.bootstrapTable('getOptions').pageNumber;
+                        var pageSize = $table.bootstrapTable('getOptions').pageSize;
+                        return (pageNumber - 1) * pageSize + index + 1;
+                    }
+                },
+                {field: 'title', title: '标题', align: 'center', width: 150},
+                {field: 'imgCount', title: '数量', align: 'center', width: 50},
+                {field: 'category', title: '分类', align: 'center', width: 50},
+                {
+                    field: 'imgList',
+                    title: '图片',
+                    align: 'center',
+                    formatter(value) {
+                        var result = "";
+                        if (value != null && value.length > 0) {
+                            for (var i = 0; i < value.length; i++) {
+                                console.log(value[i]);
+                                result += '<div class="atlas_imags"><img src="' + value[i].imgUrl + '" /></div>';
+                            }
+                        }
+                        return result;
+                    }
+                },
+                {
+                    field: 'stat',
+                    title: '状态',
+                    align: 'center',
+                    sortable: true,
+                    width: 50,
+                    formatter: function (value) {
+                        switch (value) {
+                            case "normal" :
+                                return '<span class="label label-info">正常</span>';
+                            case "audit" :
+                                return '<span class="label label-default">待审核</span>';
+                            case "pass" :
+                                return '<span class="label label-success">通过</span>';
+                            case "failed" :
+                                return '<span class="label label-warning">未通过</span>';
+                            case "block" :
+                                return '<span class="label label-danger">冻结</span>';
+                        }
+                    }
+                }
+            ],
+            queryParams: function (params) {
+                return {
+                    rows: params.limit,
+                    page: (params.offset / params.limit) + 1,
+                    sort: params.sort,
+                    order: params.order,
+                    stat: $('#stat option:selected').val()
+                };
+            }
+        });
+
+    });
+
+    /* ]]> */
+</script>
+</body>
+
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml" lang="zh-cn">
+<head>
+    <title>广州红黑信息技术</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+<style>
+    .info-title{
+        font-weight: bold;
+    }
+</style>
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">听多多</a>
+        <a>
+          <cite>APP更新</cite></a>
+      </span>
+    <button class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+            onclick="location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></button>
+</div>
+<div id="app" class="x-body">
+    <div class="layui-row">
+        <div class="layui-form layui-col-md12 x-so">
+            <button id="reset" class="layui-btn" v-on:click="resetAction()"><i class="layui-icon">
+                &#xe640;</i></button>
+            <button id="search" class="layui-btn" v-on:click="search()"><i class="layui-icon">
+                &#xe615;</i></button>
+        </div>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn" onclick="x_admin_show('更新升级APP','update')">
+            <i class="layui-icon">&#xe62f;</i>上传更新
+        </button>
+    </xblock>
+    <table class="table table-bordered">
+        <caption></caption>
+        <tbody>
+        <tr>
+            <td class="info-title">APP名称</td>
+            <td th:text="${app.appName}">暂无</td>
+            <td class="info-title">版本号</td>
+            <td th:text="${app.serverVersion}">暂无</td>
+        </tr>
+        <tr>
+            <td class="info-title">内部版本号</td>
+            <td th:text="${app.serverFlag}">暂无</td>
+            <td class="info-title">强制更新</td>
+            <td th:text="${app.lastForce}">暂无</td>
+        </tr>
+        <tr>
+            <td class="info-title">下载地址</td>
+            <td colspan="3" th:text="${app.updateUrl}">暂无</td>
+        </tr>
+        <tr>
+            <td class="info-title">描述</td>
+            <td rowspan="2" colspan="3" th:text="${app.upgradeInfo}">暂无</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+        },
+        methods: {
+            search: function () {
+                $table.bootstrapTable('refreshOptions', {pageNumber: 1});
+            },
+            resetAction: function () {
+                测试
+            }
+        }
+    });
+
+    /* ]]> */
+</script>
+</body>
+
+</html>

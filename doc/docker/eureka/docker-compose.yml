@@ -1,0 +1,26 @@
+version: '3'
+services:
+    eureka1:
+        build:
+            context: ./
+            dockerfile: Dockerfile-eureka
+        restart: always
+        hostname: eureka1
+        ports:
+          - 1025:1025
+        environment:
+          - spring.profiles.active=peer1
+    eureka2:
+        build:
+            context: ./
+            dockerfile: Dockerfile-eureka
+        restart: always
+        hostname: eureka2
+        ports:
+          - 1026:1026
+        environment:
+          - spring.profiles.active=peer2
+networks:
+  default:
+    external:
+      name: my-net

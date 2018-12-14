@@ -1,0 +1,31 @@
+server:
+  port: 1001
+
+spring:
+  application:
+    name: configer
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML5
+    encoding: UTF-8
+    cache: false
+    check-template: false
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://git.coding.net/xjp-dream/configure-center.git
+          search-paths: config-dev
+          username: xjpdyx@hotmail.com
+          password: xjpdyx32.
+      label: master
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:1025/eureka/
+    instance:
+          prefer-ip-address: true
+          hostname: localhost
+
+

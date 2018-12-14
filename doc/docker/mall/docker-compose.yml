@@ -1,0 +1,13 @@
+version: '3'
+services:
+    eureka:
+        build:
+            context: ./
+            dockerfile: Dockerfile-service-goods
+        restart: always
+        ports:
+          - 8800:8800
+networks:
+  default:
+    external:
+      name: my-net

@@ -1,0 +1,16 @@
+server:
+  port: 8000
+  context-path: /consul
+  tomcat:
+      uri-encoding: UTF-8
+spring:
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        health-check-path: ${management.contextPath}/health
+        health-check-interval: 15s
+        instance-id: consul-joker
+  application:
+    name: consul-joker

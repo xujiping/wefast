@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mall.gelunbu.mapper.WithdrawMapper">
+
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.mall.gelunbu.entity.Withdraw">
+        <id column="id" property="id" />
+        <result column="client_listen_id" property="clientListenId" />
+        <result column="pay_account" property="payAccount" />
+        <result column="type" property="type" />
+        <result column="coin" property="coin" />
+        <result column="time" property="time" />
+        <result column="success_time" property="successTime" />
+        <result column="status" property="status" />
+    </resultMap>
+
+</mapper>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>欢迎页面-X-admin2.0</title>
+    <head th:include="inc/common :: head"></head>
+
+</head>
+
+<body>
+<div class="x-body" id="app">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="username" class="layui-form-label">
+                登录名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="username" name="username" required="" lay-verify="required"
+                       autocomplete="off" value="" class="layui-input" v-model="username" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="phone" class="layui-form-label">
+                手机
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" value="" id="phone" name="phone" required="" lay-verify="phone"
+                       autocomplete="off" class="layui-input" v-model="phone" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_email" class="layui-form-label">
+                邮箱
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" value="" id="L_email" name="email" required="" lay-verify="email"
+                       autocomplete="off" class="layui-input" v-model="email" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="password" class="layui-form-label">
+                密码
+            </label>
+            <div class="layui-input-inline">
+                <input type="password" value="" id="password" name="password" required="" lay-verify="required"
+                       autocomplete="off" class="layui-input" v-model="password" />
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn" lay-filter="update" lay-submit="">
+                更新
+            </button>
+        </div>
+    </form>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    let user = [[${user}]];
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            id: user.id,
+            username: user.username,
+            phone: user.phone,
+            email: user.email,
+            password: ''
+        },
+        methods: {
+            search: function () {
+                $table.bootstrapTable('refreshOptions', {pageNumber: 1});
+            }
+        }
+    });
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        let form = layui.form
+            , layer = layui.layer;
+
+        //自定义验证规则
+        form.verify({
+            nikename: function (value) {
+                if (value.length < 5) {
+                    return '昵称至少得5个字符啊';
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(update)', function (data) {
+            let url = '/admin/' + vm.id;
+            vm.$http.put(url, {
+                username: vm.username,
+                phone: vm.phone,
+                email: vm.email,
+                password: vm.password
+            }, {emulateJSON:true}).then(function(response){
+                let result = response.body;
+                if (result.code === 0){
+                    layer.alert("修改成功", {icon: 6}, function () {
+                        // 获得frame索引
+                        let index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                        vm.search();
+                    });
+                }else{
+                    layer.alert("修改失败，请联系攻城狮", {icon: 6});
+                }
+            });
+            return false;
+        });
+
+
+    });
+
+    /* ]]> */
+</script>
+<script>let _hmt = _hmt || [];
+(function () {
+    let hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+    let s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();</script>
+</body>
+
+</html>

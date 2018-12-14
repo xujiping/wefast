@@ -1,0 +1,163 @@
+
+#left-nav {
+    padding-left: 0;
+    margin-bottom: 20px;
+}
+
+#left-nav nav {
+    background-color: white;
+    padding: 0;
+}
+
+#left-nav ul {
+    width: 100%;
+}
+
+#left-nav li {
+    width: 100%;
+    color: black;
+}
+
+#left-nav a {
+    text-align: center;
+}
+
+#right-content {
+    /*max-width: 800px;*/
+    background-color: white;
+    padding: 0;
+}
+
+#companyProfile {
+    display: none;
+    text-align: center;
+    color: #666;
+    padding: 60px 70px 180px;
+    margin-bottom: 38px;
+}
+
+#companyProfile img {
+    display: inline-block;
+    margin: 40px auto;
+}
+
+#companyProfile h5{
+    font-size: 22px;
+    margin-bottom: 50px;
+}
+
+#companyProfile p {
+    text-align: left;
+}
+
+#userAgreement {
+    display: none;
+    line-height: 32px;
+    padding: 30px 65px 50px;
+}
+
+#joinUs {
+    display: none;
+    margin-bottom: 106px;
+}
+
+.join-text{
+    max-width: 650px;
+    text-align: center;
+    font-family: "Microsoft YaHei";
+    font-size: 14px;
+    color: #666;
+    margin: 30px auto;
+}
+
+.join-nav{
+    margin: 0;
+    background-color: white;
+}
+
+.join-tab{
+    font-family: "Microsoft YaHei";
+    font-size: 20px;
+    color: #333;
+    text-align: center;
+    padding: 10px 0;
+}
+
+.join-tab a{
+    padding: 8px 0;
+}
+
+.join-tab a:hover{
+    color: #ff1800;
+}
+
+#disclaimer {
+    display: none;
+    padding: 30px 65px 90px;
+    margin-bottom: 202px;
+}
+
+#disclaimer p{
+    line-height: 2;
+}
+
+#contactUs {
+    display: none;
+    padding: 20px 30px 50px;
+    margin-bottom: 129px;
+}
+
+#cpTable{
+    font-family: "Microsoft YaHei";
+    display: none;
+}
+
+#yyTable{
+    font-family: "Microsoft YaHei";
+    display: none;
+}
+
+#nrTable{
+    font-family: "Microsoft YaHei";
+    display: none;
+}
+
+#jsTable{
+    font-family: "Microsoft YaHei";
+    display: none;
+}
+
+.join-title{
+    margin: 0;
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.join-th{
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
+    padding: 0;
+    margin-bottom: 0;
+}
+
+.join-td{
+    margin-bottom: 0;
+}
+
+.join-td img{
+    margin-left: 12px;
+    margin-right: -24px;
+}
+
+.gwzz{
+    text-align: left;
+    background-color: #fafafa;
+    padding: 30px 20px;
+}
+
+.gwzz p{
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+}

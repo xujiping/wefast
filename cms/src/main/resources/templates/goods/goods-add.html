@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>新增商品</title>
+    <head th:include="inc/common :: head"></head>
+
+</head>
+
+<body>
+<div class="x-body" id="app">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label">名称</label>
+            <div class="layui-input-inline">
+                <input type="text" id="name" name="name" required="" lay-verify="required"
+                       autocomplete="off" value="" class="layui-input" v-model="name"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label">详情</label>
+            <div class="layui-inline">
+                <div id="editor" v-html="goodsDetail"></div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="category" class="layui-form-label">类别</label>
+            <div class="layui-input-inline">
+                <select id="category" name="category" lay-verify="" lay-search="">
+                    <option value="">一级分类</option>
+                    <option value="1" selected="selected">男装</option>
+                    <option value="2">女装</option>
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <select name="category" lay-verify="" lay-search="">
+                    <option value="">二级分类</option>
+                    <option value="30" selected="selected">T恤</option>
+                    <option value="31">休闲裤</option>
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <select name="category" lay-verify="" lay-search="">
+                    <option value="">三级分类</option>
+                    <option value="32" selected="selected">短袖T恤</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn" lay-filter="update" lay-submit="">
+                更新
+            </button>
+        </div>
+    </form>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script type="text/javascript" th:src="@{/lib/wangEditor/wangEditor.js}"></script>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            name: '',
+            categoryId: '',
+            banner: '',
+            goodsDetail: ''
+        }
+    });
+
+    //初始化富文本编辑器
+    var E = window.wangEditor;
+    var editor = new E("#editor");
+    editor.customConfig.debug = true;
+    editor.customConfig.uploadImgServer = "/upload";
+    editor.customConfig.uploadImgHeaders = {
+        'Accept': 'text/x-json'
+    };
+    //文件名
+    editor.customConfig.uploadFileName = 'file';
+    //上传参数
+    editor.customConfig.uploadImgParams = {
+        filePrefix: "goods_detail_img"
+    };
+    editor.create();
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //自定义验证规则
+        form.verify({
+            nikename: function (value) {
+                if (value.length < 5) {
+                    return '昵称至少得5个字符啊';
+                }
+            }
+        });
+
+        //监听提交
+        form.on('submit(update)', function (data) {
+            var url = '/mallGoods/';
+            vm.goodsDetail = editor.txt.html();
+            vm.$http.post(url, {
+                name: vm.name,
+                detail: vm.goodsDetail
+            }, {emulateJSON: true}).then(function (response) {
+                if (response.body.code == '0') {
+                    layer.alert("修改成功", {icon: 6}, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                } else {
+                    layer.alert("修改失败，请联系攻城狮", {icon: 6});
+                }
+            });
+            return false;
+        });
+
+
+    });
+
+    /* ]]> */
+</script>
+<script>var _hmt = _hmt || [];
+(function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();</script>
+</body>
+
+</html>

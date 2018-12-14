@@ -1,0 +1,67 @@
+#sy1 {
+    padding: 100px 0 40px 0;
+    background-color: white;
+    background-image: url("/images/sy1_bg.png");
+    background-repeat: no-repeat;
+    -webkit-background-size: contain;
+    background-size: contain;
+    text-align: center;
+}
+
+#sy1 p {
+    font-size: 74px;
+    color: #333333;
+    font-family: "Microsoft YaHei UI Light";
+    margin-top: 20px;
+}
+
+#sy1-1 {
+    width: 50%;
+    margin: 0 auto;
+}
+
+#sy2{
+    padding: 200px 0 100px 0;
+}
+
+#sy2 img{
+    width: 30%;
+    margin-bottom: 10px;
+}
+
+#sy2 p {
+    max-width: 155px;
+    margin: 0 auto;
+}
+
+.main-box {
+    color: #666;
+}
+
+.line-box {
+    text-align: center;
+    margin-top: -90px;
+}
+
+#sy3 {
+    text-align: center;
+    background-color: white;
+    padding: 40px 0;
+}
+
+.sy3-title{
+    font-family: "Microsoft YaHei UI Light";
+    font-size: 4rem;
+    color: #ff1800;
+}
+
+#sy4 {
+    padding: 100px 0;
+    text-align: center;
+}
+
+.sy4-title {
+    font-family: "Microsoft YaHei UI Light";
+    color: #ff1800;
+    font-size: 4rem;
+}

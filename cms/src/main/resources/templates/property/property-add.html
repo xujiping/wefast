@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>新增属性</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+
+<body>
+<div class="x-body" id="app">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label">名称</label>
+            <div class="layui-input-inline">
+                <input type="text" id="name" name="name"
+                       autocomplete="off" value="" class="layui-input" v-model="name"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">所属类别</label>
+            <div class="layui-input-inline">
+                <select id="firstLevel" name="category" lay-filter="firstLevel">
+                    <option value="" selected="selected">一级分类</option>
+                    <option v-for="key in firstLevel" v-bind:value="key.id">{{key.name}}</option>
+                </select>
+            </div>
+            <div class="layui-input-inline" v-show="level == '2' || level == '3'">
+                <select name="category" id="secondLevel" lay-filter="secondLevel"></select>
+            </div>
+            <div class="layui-input-inline" v-show="level == '3'">
+                <select name="category" id="thirdLevel" lay-filter="thirdLevel"></select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">上级属性</label>
+            <div class="layui-input-inline">
+                <select id="topProperty" name="category" lay-filter="topProperty">
+                    <option value="" selected="selected">无</option>
+                    <option v-for="key in topKeys" v-bind:value="key.id">{{key.name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="propertyValue" class="layui-form-label">属性值</label>
+            <div class="layui-input-inline">
+                <input type="text" id="propertyValue" name="propertyValue"
+                       autocomplete="off" value="" class="layui-input" v-model="propertyValue"/>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn" v-on:click="addValue"><i class="layui-icon">&#xe608;</i></a>
+            </div>
+        </div>
+        <fieldset class="layui-elem-field">
+            <legend>已添加属性值</legend>
+            <div class="layui-field-box">
+                <span class="layui-badge-rim" v-for="item in addValues"
+                      v-on:click="removeValue(event)" style="margin-left: 10px">{{ item }}</span>
+            </div>
+        </fieldset>
+        <div class="layui-form-item">
+            <button class="layui-btn" lay-filter="add" lay-submit="true">
+                新增
+            </button>
+        </div>
+    </form>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    var topKeys = [[${topKeys}]];
+    var firstLevel = [[${firstLevel}]];
+
+    //vue.js初始化
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            name: '',
+            topKeys: topKeys,
+            firstLevel: firstLevel,
+            pid: '',
+            propertyValue: '',
+            values: [],
+            addValues: [],
+            level: '1',
+            firstSelect: '',
+            secondSelect: '',
+            thirdSelect: '',
+            categoryId: ''
+        },
+        methods: {
+            addValue: function(event){
+                var index = vm.addValues.indexOf(vm.propertyValue);
+                if (vm.propertyValue != '' && index <= -1){
+                    vm.addValues.push(vm.propertyValue);
+                    vm.propertyValue = '';
+                }
+            },
+            removeValue: function(event){
+                var el = event.target;
+                var index = vm.addValues.indexOf($(el).text());
+                alert(index);
+                if (index > -1){
+                    vm.addValues.splice(index, 1);
+                }
+                $(el).remove();
+            }
+        }
+    });
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //自定义验证规则
+        form.verify({
+            nikename: function (value) {
+                if (value.length < 5) {
+                    return '昵称至少得5个字符啊';
+                }
+            }
+        });
+
+        //上级属性
+        form.on('select(topProperty)', function (data) {
+            vm.pid = data.value;
+        });
+
+        //一级分类
+        form.on('select(firstLevel)', function(data){
+            vm.firstSelect = data.value;
+            vm.categoryId = vm.firstSelect;
+            vm.level = 2;
+            var url = '/mallCategory/pid/' + vm.firstSelect;
+            vm.$http.get(url, {emulateJSON: true}).then(function (response) {
+                if (response.body.code == '0') {
+                    var optionstring = "";
+                    $.each(response.body.data, function (i, item) {
+                        optionstring += "<option value=\"" + item.id + "\" >" + item.name + "</option>";
+                    });
+                    $("#secondLevel").html('<option value="" selected="selected">二级分类</option>' + optionstring);
+                    form.render('select');
+                }
+            });
+        });
+
+        //二级分类
+        form.on('select(secondLevel)', function(data){
+            vm.secondSelect = data.value;
+            vm.categoryId = vm.secondSelect;
+            vm.level = 3;
+            var url = '/mallCategory/pid/' + vm.secondSelect;
+            vm.$http.get(url, {emulateJSON: true}).then(function (response) {
+                if (response.body.code == '0') {
+                    var optionstring = "";
+                    $.each(response.body.data, function (i, item) {
+                        optionstring += "<option value=\"" + item.id + "\" >" + item.name + "</option>";
+                    });
+                    $("#thirdLevel").html('<option value="" selected="selected">三级分类</option>' + optionstring);
+                    form.render('select');
+                }
+            });
+        });
+
+        //三级分类
+        form.on('select(thirdLevel)', function(data){
+            vm.thirdSelect = data.value;
+            vm.categoryId = vm.thirdSelect;
+        });
+
+        //监听提交
+        form.on('submit(add)', function (data) {
+             console.log("提交");
+            var url = '/mallPropertyKey/';
+            vm.$http.post(url, {
+                name: vm.name,
+                pid: vm.pid,
+                categoryId: vm.categoryId,
+                values: vm.addValues
+            }, {emulateJSON: true}).then(function (response) {
+                if (response.body.code == '0') {
+                    layer.alert("新增成功", {icon: 6}, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                } else {
+                    layer.alert("新增失败，请联系攻城狮", {icon: 6});
+                }
+            });
+            return false;
+        });
+
+
+    });
+
+    $(function () {
+        //单选框点击事件
+        $('input:radio[name="level"]').change(function () {
+            var level = $("input[name='level']:checked").val();
+            alert(level);
+        });
+    })
+
+    /* ]]> */
+</script>
+<script>var _hmt = _hmt || [];
+(function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();</script>
+</body>
+
+</html>

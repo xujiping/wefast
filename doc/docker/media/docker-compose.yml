@@ -1,0 +1,18 @@
+version: '3'
+services:
+    hwzy-media:
+        build:
+            context: ./
+            dockerfile: Dockerfile-media
+        restart: always
+        hostname: media
+        ports:
+          - 8015:8015
+        volumes:
+          - /data/0/hyzy:/data/0/hyzy
+        environment:
+          - "SPRING_PROFILES_ACTIVE=prod"
+networks:
+  default:
+    external:
+      name: my-net

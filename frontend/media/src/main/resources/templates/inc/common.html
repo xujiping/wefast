@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<!-- 公共头部引入文件 -->
+<head th:fragment="head">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <link th:href="@{/images/favicon.ico}" rel="shortcut icon" type="image/x-icon"/>
+    <link th:href="@{/plugins/bootstrap-3.3.7-dist/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/plugins/font-awesome-4.7.0/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/build.css}" rel="stylesheet" type="text/css" />
+    <link th:href="@{/plugins/bootstrap-table-1.11.0/bootstrap-table.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/common.css}" rel="stylesheet"/>
+</head>
+
+<!-- 公共底部引入文件 -->
+<div th:fragment="plugins">
+    <script th:src="@{/plugins/jquery/jquery.js}"></script>
+    <script th:src="@{/plugins/bootstrap-3.3.7-dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/plugins/bootstrap-table-1.11.0/bootstrap-table.min.js}"></script>
+    <script th:src="@{/plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js}"></script>
+    <script th:src="@{/plugins/vue/vue.min.js}"></script>
+    <script th:src="@{/plugins/vue/vue-resource.min.js}"></script>
+    <script th:src="@{/js/common.js}"></script>
+</div>
+
+<div th:fragment="navbar">
+    <nav id="header" class="navbar navbar-light navbar-fixed-top commen-header" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header" style="margin-top: -10px;">
+                <a class="navbar-brand" href="/media/">
+                    <img id="logo" class="img-fluid" th:src="@{/images/nav_logo.png}" style="margin-top: -18px;"/>
+                </a>
+            </div>
+            <!--向右对齐-->
+            <ul class="nav navbar-nav navbar-right" style="padding: 10px 0;">
+                <a class="header-tab" href="http://www.tingduoduo.net" style="margin-right: 40px;">听多多官网</a>
+                <!--<a class="header-tab" href="#">自媒体平台</a>-->
+            </ul>
+        </div>
+    </nav>
+</div>
+
+<div th:fragment="navbar2">
+    <nav id="header2" class="navbar navbar-light navbar-fixed-top commen-header" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/media/">
+                    <img id="logo2" class="img-fluid" th:src="@{/images/nav_logo_2.png}"
+                         style="margin-top: -10px;width: 240px;"/>
+                </a>
+            </div>
+            <div>
+                <!--向右对齐-->
+                <ul class="nav navbar-nav navbar-right header-tab2">
+                    <li class="nav-item">
+                        <a href="agreement">用户协议</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="operation">运营规范</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="dispatch">发文规范</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="complaint">侵权投诉</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="punish">处罚规则</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="state">抢注申述</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="declaration">负责申明</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="contact">联系我们</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div th:fragment="navbar3">
+    <nav id="header4" class="navbar navbar-light navbar-fixed-top commen-header" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/media/">
+                    <img class="img-fluid" th:src="@{/images/nav_logo_2.png}" style="margin-top: -10px; width: 240px;"/>
+                </a>
+            </div>
+            <div>
+                <!--向右对齐-->
+                <ul class="nav navbar-nav navbar-right">
+                    <!--<li class="nav-item">-->
+                    <!--<img id="head-photo" class="user-photo" width="50" height="50"/>-->
+                    <!--</li>-->
+                    <li class="nav-item">
+                        <!--<a class="header-tab2" href="open/operation">消息</a>-->
+                        <a href="/media/logout">退出</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+
+<div th:fragment="navbar4">
+    <nav id="header5" class="navbar navbar-light navbar-fixed-top commen-header" role="navigation">
+        <div class="container my-navbar">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/media/">
+                    <img class="img-fluid" th:src="@{/images/nav_logo_2.png}" style="margin-top: -10px; width: 240px;"/>
+                </a>
+            </div>
+            <div>
+                <!--向右对齐-->
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="nav-item">
+                        <a href="http://www.tingduoduo.net:8001/media/index" style="color: #ff1800; font-size: 18px;">返回首页
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div th:fragment="footer">
+    <div id="footer">
+        <div class="container">
+            <div class="foot-nav">
+                <a class="nav-link" href="open/agreement">用户协议</a>
+                <a class="nav-link" href="open/operation">运营规范</a>
+                <a class="nav-link" href="open/dispatch">发文规范</a>
+                <a class="nav-link" href="open/complaint">侵权投诉</a>
+                <a class="nav-link" href="open/punish">处罚规则</a>
+                <a class="nav-link" href="open/state">抢注申诉</a>
+                <a class="nav-link" href="open/declaration">负责申明</a>
+                <a class="nav-link" href="open/contact">联系我们</a>
+            </div>
+            <div class="footer-text">
+                <p>Copyright &copy; Guangzhou Honghei information technology Ltd, All
+                    Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="leftNav">
+    <ul class="left-nav">
+        <li>
+            <a id="left-nav-home" href="/media/home">
+                <p>
+                    <img th:src="@{/images/left_nav_home.png}"/><span>首页</span>
+                </p>
+            </a>
+        </li>
+        <li>
+            <a id="left-nav-publish" href="/media/publish">
+                <p>
+                    <img th:src="@{/images/left_nav_publish.png}"/><span>发表音频</span>
+                </p>
+            </a>
+        </li>
+        <li>
+            <a id="left-nav-content" href="/media/clientRelease">
+                <p>
+                    <img th:src="@{/images/left_nav_release.png}"/><span>音频管理</span>
+                </p>
+            </a>
+        </li>
+        <li>
+            <a id="left-nav-atlas" href="/media/atlas/index">
+                <p>
+                    <img th:src="@{/images/left_nav_atlas.png}"/><span>图集</span>
+                </p>
+            </a>
+        </li>
+        <li>
+            <a id="left-nav-video" href="/media/video/index">
+                <p>
+                    <img th:src="@{/images/left_nav_video.png}"/><span>视频</span>
+                </p>
+            </a>
+        </li>
+    </ul>
+</div>
+
+</html>

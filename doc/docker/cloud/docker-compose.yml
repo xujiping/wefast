@@ -1,0 +1,21 @@
+version: '3'
+services:
+    configer:
+        build:
+            context: ./
+            dockerfile: Dockerfile-configer
+        restart: always
+        ports:
+          - 1001:1001
+    gateway:
+        build:
+            context: ./
+            dockerfile: Dockerfile-gateway
+        restart: always
+        ports:
+          - 1002:1002
+
+networks:
+    default:
+        external:
+            name: my-net

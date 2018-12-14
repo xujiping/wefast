@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>听多多自媒体平台-公告</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+<style>
+    body{
+        background-color: white;
+    }
+    .title{
+        text-align: center;
+    }
+    .time{
+        text-align: right;
+    }
+    .detail{
+
+    }
+</style>
+<body>
+<div id="app" class="container">
+    <h3 class="title" v-html="notice.title"></h3>
+    <p class="time" v-html="time"></p>
+    <div class="detail" v-html="notice.detail"></div>
+</div>
+<div th:include="inc/common :: plugins"></div>
+</body>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    var notice = [[${notice}]];
+
+    //vue.js初始化
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            notice: notice
+        },
+        computed:{
+            time: function(){
+               return formatDateTime(this.notice.createTime)
+            }
+        }
+    });
+
+    $(function () {
+
+    });
+
+    /* ]]> */
+</script>
+</html>

@@ -1,0 +1,85 @@
+spring:
+    application:
+        name: cms
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+        sql-script-encoding: UTF-8
+        platform: mysql
+        url: jdbc:mysql://rm-2zehroc94201fpa07o.mysql.rds.aliyuncs.com:3306/gelunbu?characterEncoding=utf8&useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai
+        username: daliao_rw
+        password: Liu123456
+    thymeleaf:
+    #修改跳转的前缀和后缀,以下注释部分是spring boot的默认配置
+        prefix: classpath:/templates/
+        suffix: .html
+        mode: HTML5
+        encoding: UTF-8
+        #开发过程中需将缓存关闭
+        cache: false
+        check-template: false
+    http:
+        encoding:
+            charset: UTF-8
+            enabled: true
+            force: true
+        multipart:
+            max-file-size: 100Mb
+            max-request-size: 100Mb
+    redis:
+        #Redis数据库索引（默认为0）
+        database: 0
+        host: 60.205.226.244
+        port: 6379
+        password: libin19830213
+        #连接超时时间（毫秒）
+#        timeout: 10000
+        pool:
+            #连接池最大连接数（使用负值表示没有限制）
+            max-active: 20
+            #连接池最大阻塞等待时间（使用负值表示没有限制）
+            max-wait: -1
+            #连接池中最大空闲连接
+            max-idle: 10
+            #连接池中最小空闲连接
+            min-idle: 1
+#mybatis-plus配置
+mybatis-plus:
+    mapper-locations: classpath:/com/rb/cms/mapper/xml/*Mapper.xml
+    #实体扫描
+    type-aliases-package: com.rb.cms.entity
+    global-config:
+        #主键类型 0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID
+        id-type: 3
+        #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+        field-strategy: 2
+        #驼峰下划线转换
+        db-column-underline: true
+        #全局表前缀
+#        table-prefix: cms
+        #刷新mapper 调试神器
+        refresh-mapper: true
+        #数据库大写下划线转换
+        capital-mode: true
+        # Sequence序列接口实现类配置
+        key-generator: com.baomidou.mybatisplus.incrementer.OracleKeyGenerator
+        #逻辑删除配置（下面3个配置）
+        logic-delete-value: 1
+        logic-not-delete-value: 0
+        sql-injector: com.baomidou.mybatisplus.mapper.LogicSqlInjector
+        #自定义填充策略接口实现
+        meta-object-handler: com.rb.cms.handler.MyMetaObjectHandler
+    configuration:
+        #配置返回数据库(column下划线命名&&返回java实体是驼峰命名)，自动匹配无需as（没开启这个，SQL需要写as： select user_id as userId）
+        map-underscore-to-camel-case: true
+        cache-enabled: false
+        #配置JdbcTypeForNull, oracle数据库必须配置
+        jdbc-type-for-null: 'null'
+
+# 资源目录
+file:
+    server: /data/0/hyzy/
+
+my:
+    # 是否上传文件到oss
+    upload-oss: true

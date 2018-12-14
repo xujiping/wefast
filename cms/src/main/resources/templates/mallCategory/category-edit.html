@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>修改商品类别</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+
+<body>
+<div class="x-body" id="app">
+    <form class="layui-form" lay-filter="myForm">
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label">名称</label>
+            <div class="layui-input-inline">
+                <input type="text" id="name" name="name" required="" lay-verify="required"
+                       autocomplete="off" value="" class="layui-input" v-model="name"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">单选框</label>
+            <div class="layui-input-block">
+                <input type="radio" name="level" value="1" title="一级" lay-filter="level"/>
+                <input type="radio" name="level" value="2" title="二级" lay-filter="level"/>
+                <input type="radio" name="level" value="3" title="三级" lay-filter="level"/>
+            </div>
+        </div>
+        <div class="layui-form-item" v-show="level != '1'">
+            <label class="layui-form-label">所属类别</label>
+            <div class="layui-input-inline" v-show="level == '2' || level == '3'">
+                <select id="firstLevel" name="category" lay-filter="firstLevel" lay-verify="firstLevel"></select>
+            </div>
+            <div class="layui-input-inline" v-show="level == '3'">
+                <select name="category" id="secondLevel" lay-filter="secondLevel" lay-verify="secondLevel"></select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn" lay-filter="update" lay-submit="">
+                更新
+            </button>
+        </div>
+    </form>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    var category = [[${mallCategory}]];
+
+    //vue.js初始化
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            id: category.id,
+            name: category.name,
+            level: category.level,
+            firstSelect: category.firstSelect,
+            secondSelect: category.secondSelect,
+            pid: ''
+        }
+    });
+
+    layui.use(['form', 'layer'], function () {
+        $ = layui.jquery;
+        var form = layui.form
+            , layer = layui.layer;
+
+        //初始化级别
+        $("input[name='level'][value='" + vm.level + "']").attr("checked","checked");
+        form.render('radio');
+        //初始化下拉框
+        if (vm.level != 1){
+            //一级分类
+            var url = '/mallCategory/level/' + 1;
+            vm.$http.get(url, {emulateJSON: true}).then(function (response) {
+                if (response.body.code == '0') {
+                    vm.firstLevel = response.body.data;
+                    var optionstring = "";
+                    $.each(response.body.data, function (i, item) {
+                        optionstring += "<option value=\"" + item.id + "\" >" + item.name + "</option>";
+                    });
+                    $("#firstLevel").html('<option value="">一级分类</option>' + optionstring);
+                    $("#firstLevel").val(vm.firstSelect);
+                    form.render('select');
+                }
+            });
+        }
+        if (vm.level == 3) {
+            var url = '/mallCategory/pid/' + vm.firstSelect;
+            vm.$http.get(url, {emulateJSON: true}).then(function (response) {
+                if (response.body.code == '0') {
+                    vm.firstLevel = response.body.data;
+                    var optionstring = "";
+                    $.each(response.body.data, function (i, item) {
+                        optionstring += "<option value=\"" + item.id + "\" >" + item.name + "</option>";
+                    });
+                    $("#secondLevel").html('<option value="">二级分类</option>' + optionstring);
+                    $("#secondLevel").val(vm.secondSelect);
+                    form.render('select');
+                }
+            });
+        }
+
+        //校验
+        form.verify({
+            firstLevel: function (value, item) {
+                if (vm.level != 1){
+                    if(value == ''){
+                        return "请选择一级分类";
+                    }
+                }
+            },
+            secondLevel: function (value, item) {
+                if (vm.level == 3){
+                    if(value == ''){
+                        return "请选择二级分类";
+                    }
+                }
+            }
+        });
+
+        //下拉框
+        form.on('select(firstLevel)', function(data){
+            vm.firstSelect = data.value;
+            vm.pid = vm.firstSelect;
+            var url = '/mallCategory/pid/' + vm.firstSelect;
+            vm.$http.get(url, {emulateJSON: true}).then(function (response) {
+                if (response.body.code == '0') {
+                    vm.firstLevel = response.body.data;
+                    var optionstring = "";
+                    $.each(response.body.data, function (i, item) {
+                        optionstring += "<option value=\"" + item.id + "\" >" + item.name + "</option>";
+                    });
+                    $("#secondLevel").html('<option value="" selected="selected">二级分类</option>' + optionstring);
+                    form.render('select');
+                }
+            });
+        });
+
+        form.on('select(secondLevel)', function(data){
+           vm.secondSelect = data.value;
+           vm.pid = vm.secondSelect;
+        });
+
+        //单选框
+        form.on('radio(level)', function (data) {
+            vm.level = data.value;
+            if (vm.level != 1) {
+                //查询一级分类
+                var url = '/mallCategory/level/' + 1;
+                vm.$http.get(url, {emulateJSON: true}).then(function (response) {
+                    if (response.body.code == '0') {
+                        vm.firstLevel = response.body.data;
+                        var optionstring = "";
+                        $.each(response.body.data, function (i, item) {
+                            optionstring += "<option value=\"" + item.id + "\" >" + item.name + "</option>";
+                        });
+                        $("#firstLevel").html('<option value="" selected="selected">一级分类</option>' + optionstring);
+                        form.render('select');
+                    }
+                });
+            }
+            if (vm.level == 3) {
+                $("#secondLevel").html('<option value="" selected="selected">二级分类</option>');
+            }
+        });
+
+        //监听提交
+        form.on('submit(update)', function (data) {
+            var url = '/mallCategory/' + vm.id;
+            vm.$http.put(url, {
+                name: vm.name,
+                level: vm.level,
+                pid: vm.pid
+            }, {emulateJSON: true}).then(function (response) {
+                if (response.body.code == '0') {
+                    layer.alert("修改成功", {icon: 6}, function () {
+                        // 获得frame索引
+                        var index = parent.layer.getFrameIndex(window.name);
+                        //关闭当前frame
+                        parent.layer.close(index);
+                    });
+                } else {
+                    layer.alert("修改失败，请联系攻城狮", {icon: 6});
+                }
+            });
+            return false;
+        });
+
+
+    });
+
+    /* ]]> */
+</script>
+<script>var _hmt = _hmt || [];
+(function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();</script>
+</body>
+
+</html>

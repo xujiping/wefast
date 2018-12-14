@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<!-- 公共头部引入文件 -->
+<head th:fragment="head">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!--关键字-->
+    <meta name="keywords" content="听多多,FM,tingduoduo,音频,提现,零花," />
+    <!--防止被调用-->
+    <meta http-equiv="window-target" content="_top" />
+    <!--收藏夹图标-->
+    <link rel = "shortcut icon" th:href="@{/images/favicon.ico}" />
+    <link rel="shortcut icon" th:href="@{/images/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"/>
+    <link rel="stylesheet" th:href="@{/css/common.css}"/>
+</head>
+
+<!-- 公共底部引入文件 -->
+<div th:fragment="plugins">
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <script th:src="@{/js/common.js}"></script>
+</div>
+
+<div th:fragment="navbar">
+    <nav id="header" class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <!-- Brand/logo -->
+            <a class="navbar-brand" href="/">
+                <img id="logo" class="img-fluid" th:src="@{/images/nav_logo.png}"/>
+            </a>
+            <button id="menu" class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#collapsibleNavbar"
+                     aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Links -->
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav mr-auto my-2 mt-lg-0">
+
+                </ul>
+                <ul class="navbar-nav my-2 my-lg-0">
+                    <li id="index" class="nav-item">
+                        <a class="nav-link" href="/index">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="http://www.tingduoduo.net:8001/media">自媒体平台</a>
+                    </li>
+                    <li id="about" class="nav-item">
+                        <a class="nav-link" href="/about">关于我们</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+
+<div th:fragment="footer">
+    <div id="footer">
+        <div class="container">
+            <ul class="nav justify-content-center">
+                <li class="nav-item">
+                    <a class="nav-link" href="/about?tab=disclaimer">免责声明</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about?tab=user_agreement">用户协议</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about?tab=contact_us">联系我们</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">关于我们</a>
+                </li>
+            </ul>
+            <div style="font-family: 'Microsoft Yahei'; font-size: 12px; color: #999">
+                <p style="margin-bottom: 10px;">Copyright &copy; Guangzhou Honghei information technology Ltd, All
+                    Rights Reservedd
+                    .</p>
+                <p style="margin-bottom: 0;">广州红黑信息技术有限公司 版权所有 地址：广州市海珠区叠景中路80号2303房 联系QQ：3253769427</p>
+                <p><a href="http://www.miitbeian.gov.cn">粤ICP备18098031号</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</html>

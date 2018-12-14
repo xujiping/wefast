@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>欢迎页面-X-admin2.0</title>
+    <head th:include="inc/common :: head"></head>
+
+</head>
+
+<body>
+<div class="x-body" id="app">
+    <table id="table"></table>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    let clientListenId = [[${clientListenId}]];
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            id: clientListenId
+        }
+    });
+
+    let $table = $('#table');
+    $(function () {
+        // bootstrap table初始化
+        $table.bootstrapTable
+        ({
+            url: '/wealDetail/list',
+            height: setTableHeight(),
+            striped: true,
+            search: false,
+            showRefresh: true,
+            showColumns: false,
+            minimumCountColumns: 2,
+            clickToSelect: true,
+            detailView: false,
+            detailFormatter: 'detailFormatter',
+            pagination: true,
+            paginationLoop: false,
+            sidePagination: 'server',
+            silentSort: false,
+            sortName: 'create_time',
+            sortOrder: 'desc',
+            sortable: true,
+            smartDisplay: false,
+            escape: true,
+            searchOnEnterKey: true,
+            idField: 'id',
+            maintainSelected: true,
+            toolbar: '#toolbar',
+            columns: [
+                {
+                    id: '',
+                    title: '序号',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        let pageNumber = $table.bootstrapTable('getOptions').pageNumber;
+                        let pageSize = $table.bootstrapTable('getOptions').pageSize;
+                        return (pageNumber - 1) * pageSize + index + 1;
+                    }
+                },
+                {field: 'title', title: '标题', align: 'center'},
+                {field: 'introduce', title: '简介', align: 'center'},
+                {
+                    field: 'size',
+                    title: '金币',
+                    align: 'center',
+                    formatter: function (value, row, index){
+                        if (value >= 0) {
+                            return '<span style="color: red">' + value + '</span>';
+                        }else {
+                            return '<span style="color: dodgerblue">' + value + '</span>';
+                        }
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '奖励时间',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (value == '' || value == null) {
+                            return '';
+                        }
+                        return new Date(parseInt(value)).toLocaleString().replace(/:\d{1,2}$/, ' ');
+                    }
+                }
+            ],
+            queryParams: function (params) {
+                return {
+                    limit: params.limit,
+                    offset: params.offset,
+                    sort: params.sort,
+                    order: params.order,
+                    clientListenId: vm.id,
+                };
+            }
+        });
+    });
+
+    /* ]]> */
+</script>
+<script>var _hmt = _hmt || [];
+(function () {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?b393d153aeb26b46e9431fabaf0f6190";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</body>
+
+</html>

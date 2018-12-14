@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>听多多自媒体平台-登录</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+<style>
+</style>
+<body>
+<div style="width: 100%; height: 100%; min-width: 1200px; position: absolute; z-index: -1;"></div>
+<div class="container-fluid main">
+    <div th:include="inc/common :: navbar2"></div>
+
+    <div class="container paper">
+        <p class="paper-title" style="font-size: 24px; margin-bottom: 0;">
+            免责申明
+        </p>
+        <div style="width: 100%; height: 1px; border-bottom: 1px solid #ff1800; margin: 16px 0;"></div>
+        <div class="paper-text">
+            <img class="img-fluid" th:src="@{/images/contact.png}" />
+            <p>
+                <strong>联系我们</strong>
+            </p>
+            <p style="color: #999; margin-bottom: 0;">QQ：3253769427</p>
+            <p style="color: #999">Email：3253769427@qq.com</p>
+        </div>
+    </div>
+</div>
+<div th:include="inc/common :: plugins"></div>
+</body>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    $(function () {
+        setNavtab();
+    });
+
+    /* ]]> */
+</script>
+</html>

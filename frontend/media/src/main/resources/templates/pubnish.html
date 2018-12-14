@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>听多多自媒体平台-登录</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+<style>
+</style>
+<body>
+<div style="width: 100%; height: 100%; min-width: 1200px; position: absolute; z-index: -1;"></div>
+<div class="container-fluid main">
+    <div th:include="inc/common :: navbar2"></div>
+
+    <div class="container paper">
+        <p class="paper-title" style="font-size: 24px; margin-bottom: 0;">
+            处罚规则
+        </p>
+        <div style="width: 100%; height: 1px; border-bottom: 1px solid #ff1800; margin: 16px 0;"></div>
+        <div class="paper-text">
+            <p>
+                1. 听多多自媒体平台账号被扣分后（0&lt;当前帐号分值&lt;100），平台设置7天考察期，从扣分当天0点开始算起：若7天内无违禁行为（即无新的扣分产生），7天后每天恢复1分。如：9月1日扣分，7天内无违禁，9月9日0点恢复1分。若7天内有违禁行为（即有新的扣分产生），则考察期重新计算。如：9月1日第一次扣分，9月2日又被扣分，9月11日0点恢复1分。
+            </p>
+            <p>
+                若第一次违规后，7天内无违禁行为（即无新的扣分产生），7天后每天恢复1分。若扣分开始恢复后，再次发生违禁行为，则考察期从第2次扣分重新计算。如：9月1日第一次扣分，7天内无违禁，9月9日0点恢复1分，9月12日再次被扣分，9月20日0点恢复1分。
+            </p>
+            <p>
+                2. 当前帐号分值低于50分（不含50分）时，进行封号处理且不可恢复。
+            </p>
+            <p>
+                3. 因「发布反动、违法内容」、「发布谣言造成恶劣影响」「伪造身份资料或机构资质、专业资格证明」，「恶意批量注册帐号，养号卖号」被扣分的，进行封号处理且不可恢复。
+            </p>
+            <p>
+                4.账号分值低于100分不能提现。
+            </p>
+            <p>
+                听多多自媒体平台账号违规行为及相应处罚：
+            </p>
+            <p>
+                <img class="img-fluid" th:src="@{/images/operation_table_1.png}"/>
+            </p>
+            <p>
+                希望各位自媒体作者共同遵守平台运营规范，维护平台创作环境，为读者贡献更多优质内容。
+            </p>
+            <p>
+                <strong>备注：</strong>
+            </p>
+            <p>
+                1. 账号分值：是衡量听多多自媒体账号运营良好的标准之一。账号分值满分为100分，当发生上述违规行为后，账号分值会进行扣分，当账号分值≤50分时，账号自动封号且不可恢复。
+            </p>
+            <p>
+                2、针对抄袭行为，请参考 <a href="complaint">侵权投诉</a>
+            </p>
+            <p style="text-align: right;">
+                听多多自媒体平台团队
+            </p>
+            <p style="text-align: right;">
+                2018年7月30日
+            </p>
+        </div>
+    </div>
+</div>
+<div th:include="inc/common :: plugins"></div>
+</body>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    $(function () {
+        setNavtab();
+    });
+
+    /* ]]> */
+</script>
+</html>

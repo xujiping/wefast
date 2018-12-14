@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>听多多官网</title>
+    <head th:include="inc/common :: head"></head>
+    <link rel="stylesheet" th:href="@{/css/about.css}"/>
+</head>
+<body>
+<div class="container-fluid main">
+    <div th:include="inc/common :: navbar"></div>
+
+    <div class="container" style="padding-top: 130px;">
+        <div class="row" style="margin: 0;">
+            <!-- 左侧导航栏 -->
+            <div id="left-nav" class="col-lg-2">
+                <nav class="navbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item company-profile">
+                            <a class="nav-link" href="?tab=company_profile">公司简介</a>
+                        </li>
+                        <li class="nav-item join-us">
+                            <a class="nav-link" href="?tab=join_us">加入我们</a>
+                        </li>
+                        <li class="nav-item disclaimer">
+                            <a class="nav-link" href="?tab=disclaimer">免责声明</a>
+                        </li>
+                        <li class="nav-item user-agreement">
+                            <a class="nav-link" href="?tab=user_agreement">用户协议</a>
+                        </li>
+                        <li class="nav-item contact-us">
+                            <a class="nav-link" href="?tab=contact_us">联系我们</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div id="right-content" class="col-lg-10">
+                <div id="companyProfile">
+                    <img th:src="@{/images/gsjj_1.png}" />
+                    <h5>听多多 ———— 让您的收听更具价值</h5>
+                    <p style="text-indent: 2em">2018年8月正式上线，主打“轻收听”，以娱乐生活为主体内容，通过特色运营手段，培养用户收听习惯。</p>
+                    <p style="text-indent: 2em">凭借新颖的定位及内容聚合模式与其它已经耕耘多年的老牌APP形成优势区隔，希望成为2018年电台类APP里的新锐黑马。</p>
+                </div>
+                <div id="userAgreement" th:include="inc/userAgreement :: content"></div>
+                <div id="joinUs" th:include="inc/joinUs :: content"></div>
+                <div id="disclaimer" th:include="inc/disclaimer :: content"></div>
+                <div id="contactUs">
+                    <img class="img-fluid" th:src="@{/images/lxwm_1.png}" />
+                    <div>
+                        <p style="font-weight: bold">联系我们</p>
+                        <p style="color: #666; margin-bottom: 10px;">QQ : 3253769427</p>
+                        <p style="color: #666;">Email : 3253769427@qq.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:include="inc/common :: footer"></div>
+</div>
+<div th:include="inc/common :: plugins"></div>
+</body>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //设置tab
+    function setTab(){
+        var tab = getQueryString('tab');
+        switch (tab) {
+            case 'company_profile':
+                $('.company-profile').css('background-color', 'red');
+                $('.company-profile a').css('color', 'white');
+                $('#companyProfile').show();
+                break;
+            case 'join_us':
+                $('.join-us').css('background-color', 'red');
+                $('.join-us a').css('color', 'white');
+                $('#joinUs').show();
+                $('#right-content').css('background-color', '#f5f5f5');
+                setJoinTab();
+                break;
+            case 'disclaimer':
+                $('.disclaimer').css('background-color', 'red');
+                $('.disclaimer a').css('color', 'white');
+                $('#disclaimer').show();
+                break;
+            case 'user_agreement':
+                $('.user-agreement').css('background-color', 'red');
+                $('.user-agreement a').css('color', 'white');
+                $('#userAgreement').show();
+                break;
+            case 'contact_us':
+                $('.contact-us').css('background-color', 'red');
+                $('.contact-us a').css('color', 'white');
+                $('#contactUs').show();
+                break;
+            default:
+                $('.company-profile').css('background-color', 'red');
+                $('.company-profile a').css('color', 'white');
+                $('#companyProfile').show();
+        }
+    }
+
+    //设置加入我们tab
+    function setJoinTab(){
+        var joinTab = getQueryString('joinTab');
+        switch (joinTab){
+            case 'product':
+                $('#cpTable').show();
+                //获取当前tab
+                var curTab = $('.join-nav').find('li').eq(0);
+                curTab.css('background-color', '#ff250e');
+                curTab.find('a').css('color', '#fff');
+                break;
+            case 'operation':
+                $('#yyTable').show();
+                //获取当前tab
+                var curTab = $('.join-nav').find('li').eq(1);
+                curTab.css('background-color', '#ff250e');
+                curTab.find('a').css('color', '#fff');
+                break;
+            case 'content':
+                $('#nrTable').show();
+                //获取当前tab
+                var curTab = $('.join-nav').find('li').eq(2);
+                curTab.css('background-color', '#ff250e');
+                curTab.find('a').css('color', '#fff');
+                break;
+            case 'technology':
+                $('#jsTable').show();
+                //获取当前tab
+                var curTab = $('.join-nav').find('li').eq(3);
+                curTab.css('background-color', '#ff250e');
+                curTab.find('a').css('color', '#fff');
+                break;
+            default:
+                $('#cpTable').show();
+                //获取当前tab
+                var curTab = $('.join-nav').find('li').eq(0);
+                curTab.css('background-color', '#ff250e');
+                curTab.find('a').css('color', '#fff');
+        }
+
+    }
+
+    $(function () {
+        //设置当前navbar
+        $('#about a').css('color', '#ff1800');
+        setTab();
+        setNavbar();
+
+    });
+
+    /* ]]> */
+</script>
+</html>

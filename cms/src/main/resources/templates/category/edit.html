@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+<head>
+    <title>欢迎页面-X-admin2.0</title>
+    <head th:include="inc/common :: head"></head>
+    <link rel="stylesheet" th:href="@{/plugins/fileinput/css/fileinput.css}"/>
+</head>
+
+<body>
+<div class="x-body" id="app">
+    <div class="layui-form-item">
+        <label for="categoryName" class="layui-form-label">
+            名称
+        </label>
+        <div class="layui-input-block">
+            <input type="text" id="categoryName" name="categoryName" required="" lay-verify="required"
+                   autocomplete="off" value="" class="layui-input" v-model="categoryName"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="seq" class="layui-form-label">
+            顺序
+        </label>
+        <div class="layui-input-block">
+            <input type="number" value="" id="seq" name="seq" required="" lay-verify="required"
+                   autocomplete="off" class="layui-input" v-model="seq"/>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="levelRadio" class="layui-form-label">
+            级别
+        </label>
+        <div id="levelRadio" class="layui-input-block">
+            <label class="radio-inline" id="force">
+                <input type="radio" name="levelRadio" id="optionsRadios3"
+                       value="1" checked="checked"/> 一级
+            </label>
+            <label class="radio-inline">
+                <input type="radio" name="levelRadio" id="optionsRadios4"
+                       value="2"/> 二级
+            </label>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label for="topField" class="layui-form-label">
+            上级类别
+        </label>
+        <div class="layui-input-block">
+            <select id="topField">
+                <option th:each="topCategory : ${topCategories}" th:text="${topCategory.name}"
+                        th:value="${topCategory.id}"></option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item" style="text-align: center;">
+        <button class="layui-btn" lay-filter="update" onclick="update()">
+            更新
+        </button>
+    </div>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:src="@{/plugins/fileinput/js/fileinput.js}"></script>
+<script th:src="@{/plugins/fileinput/js/locales/zh.js}"></script>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    let category = [[${category}]];
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            id: category.id,
+            categoryName: category.name,
+            seq: category.seq
+        }
+    });
+
+    // 更新
+    function update() {
+        let name = vm.categoryName;
+        let seq = vm.seq;
+        let level = $("input[name='levelRadio']:checked").val();
+        let topField = $('#topField option:selected').val();
+        let url = "/category/update";
+        $.post(url, {
+            id: category.id,
+            name: name,
+            level: level,
+            parent: topField,
+            seq: seq
+        }, function (result) {
+            if (result.code === 0) {
+                $("#uploadfile").fileinput("clear");
+                layer.msg('操作成功', {icon: 1});
+                vm.search();
+            }
+        });
+    }
+
+    $(function () {
+        $("#uploadfile").fileinput({
+            language: 'zh', //设置语言
+            uploadUrl: "/category/upload", //上传的地址
+            allowedFileExtensions: ['apk'],//接收的文件后缀
+            uploadAsync: true, //默认异步上传
+            showUpload: false, //是否显示上传按钮
+            showRemove: true, //显示移除按钮
+            showPreview: true, //是否显示预览
+            showCaption: false,//是否显示标题
+            browseClass: "btn btn-primary", //按钮样式
+            dropZoneEnabled: true,//是否显示拖拽区域
+            maxFileCount: 1, //表示允许同时上传的最大文件个数
+            enctype: 'multipart/form-data',
+            validateInitialCount: true,
+            msgFilesTooMany: "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+        }).on("fileuploaded", function (event, data, previewId, index) {
+
+        });
+
+    });
+
+    /* ]]> */
+</script>
+</body>
+
+</html>

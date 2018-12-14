@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" xmlns:v-on="http://www.w3.org/1999/xhtml" lang="zh-cn">
+<head>
+    <title>广州红黑信息技术</title>
+    <head th:include="inc/common :: head"></head>
+</head>
+<style>
+</style>
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">听多多</a>
+        <a>
+          <cite>音频列表</cite></a>
+      </span>
+    <button class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+            onclick="location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></button>
+</div>
+<div id="app" class="x-body">
+    <div class="layui-row">
+        <div class="layui-form layui-col-md12 x-so">
+            <div class="layui-inline">
+                <select id="stat" name="stat" lay-verify="">
+                    <option value="">不限</option>
+                    <!--<option value="normal">正常</option>-->
+                    <option value="pass">通过</option>
+                    <option value="audit" selected="selected">待审核</option>
+                    <option value="failed">未通过</option>
+                    <option value="block">冻结</option>
+                </select>
+            </div>
+            <input type="text" name="title" placeholder="请输入音频标题" autocomplete="off" class="layui-input"
+                   v-model="title"/>
+            <button id="reset" class="layui-btn" v-on:click="resetAction()"><i class="layui-icon">
+                &#xe640;</i></button>
+            <button id="search" class="layui-btn" v-on:click="search()"><i class="layui-icon">
+                &#xe615;</i></button>
+        </div>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="changeStat('block')"><i class="layui-icon"></i>冻结
+        </button>
+        <button class="layui-btn layui-btn-warm" onclick="changeStat('failed')"><i class="layui-icon">&#x1006;</i>不通过
+        </button>
+        <button class="layui-btn layui-btn" onclick="changeStat('pass')"><i class="layui-icon">&#xe605;</i>通过</button>
+    </xblock>
+    <table id="table"></table>
+</div>
+<head th:include="inc/common :: foot"></head>
+<script th:inline="javascript">
+    /* <![CDATA[ */
+
+    //vue.js初始化
+    let vm = new Vue({
+        el: "#app",
+        data: {
+            stat: '',
+            title: ''
+        },
+        methods: {
+            search: function () {
+                $table.bootstrapTable('refreshOptions', {pageNumber: 1});
+            },
+            resetAction: function () {
+                vm.stat = '';
+                vm.title = '';
+            }
+        }
+    });
+
+    function changeStat(stat) {
+        let confirmTitle = "确认审核通过吗？";
+        if (stat === 'failed') {
+            confirmTitle = "确认审核不通过吗？";
+        }else if(stat === 'block'){
+            confirmTitle = "确认冻结码？";
+        }
+        let rows = $table.bootstrapTable('getSelections');
+        if (rows.length === 0) {
+            layer.alert("请至少选择一条记录", {icon: 6});
+        } else {
+            let ids = [];
+            for (let i in rows) {
+                if (rows.hasOwnProperty(i)) {
+                    ids.push(rows[i].id);
+                }
+            }
+            layer.confirm(confirmTitle, function (index) {
+                vm.$http.put('/resContent/stat/' + ids, {
+                    stat: stat
+                }, {emulateJSON: true}).then(function (response) {
+                    let result = response.body;
+                    if (result.code === 0) {
+                        layer.msg('操作成功', {icon: 1});
+                        vm.search();
+                    } else {
+                        layer.msg(result.msg, {icon: 2});
+                    }
+                });
+
+            });
+        }
+    }
+
+    //表格插件
+    let $table = $('#table');
+    $(function () {
+        // bootstrap table初始化
+        $table.bootstrapTable
+        ({
+            url: '/resContent/list',
+            height: setTableHeight(),
+            striped: true,
+            search: false,
+            showRefresh: false,
+            showColumns: false,
+            minimumCountColumns: 2,
+            clickToSelect: true,
+            detailView: false,
+            detailFormatter: 'detailFormatter',
+            pagination: true,
+            paginationLoop: false,
+            sidePagination: 'server',
+            silentSort: false,
+            sortName: 'submit_time',
+            sortOrder: 'desc',
+            sortable: true,
+            smartDisplay: false,
+            escape: true,
+            searchOnEnterKey: true,
+            idField: 'id',
+            maintainSelected: true,
+            toolbar: '#toolbar',
+            columns: [
+                {field: 'ck', checkbox: true},
+                {
+                    id: '',
+                    title: '序号',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        let pageNumber = $table.bootstrapTable('getOptions').pageNumber;
+                        let pageSize = $table.bootstrapTable('getOptions').pageSize;
+                        return (pageNumber - 1) * pageSize + index + 1;
+                    }
+                },
+                {
+                    field: 'title',
+                    title: '标题',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return "《" + value + "》"
+                    }
+                },
+                {
+                    field: 'contentUrl',
+                    title: '试听',
+                    align: 'center',
+                    formatter: function (value) {
+                        return '<audio src="' + value + '" controls="controls"></audio>';
+                    }
+                },
+                {field: 'clientReleaseName', title: '专辑名称', align: 'center'},
+                {
+                    field: 'coverImageUrl',
+                    title: '封面',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return '<img src="' + value + '" />';
+                    }
+                },
+                {field: 'typeName', title: '类别', align: 'center'},
+                {
+                    field: 'submitTime',
+                    title: '提交时间',
+                    align: 'center',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return new Date(parseInt(value)).toLocaleString().replace(/:\d{1,2}$/, ' ');
+                    }
+                },
+                {
+                    field: 'passTime',
+                    title: '审核时间',
+                    align: 'center',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value == null) {
+                            return "";
+                        }
+                        return new Date(parseInt(value)).toLocaleString().replace(/:\d{1,2}$/, ' ');
+                    }
+                },
+                {
+                    field: 'stat',
+                    title: '状态',
+                    align: 'center',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if (value === "normal") {
+                            return "<span class=\"label label-info\">正常</span>";
+                        } else if (value === "audit") {
+                            return "<span class=\"label label-default\">待审核</span>";
+                        } else if (value === "pass") {
+                            return "<span class=\"label label-success\">通过</span>";
+                        } else if (value === "failed") {
+                            return "<span class=\"label label-warning\">未通过</span>";
+                        } else if (value === "block") {
+                            return "<span class=\"label label-danger\">冻结</span>";
+                        }
+                    }
+                }
+            ],
+            queryParams: function (params) {
+                if (params.sort === 'submitTime') {
+                    params.sort = 'submit_time';
+                }
+                if (params.sort === 'passTime') {
+                    params.sort = 'pass_time';
+                }
+                return {
+                    rows: params.limit,
+                    page: (params.offset / params.limit) + 1,
+                    sort: params.sort,
+                    order: params.order,
+                    stat: $('#stat option:selected').val(),
+                    title: vm.title
+                };
+            }
+        });
+
+    });
+
+    /* ]]> */
+</script>
+</body>
+
+</html>
