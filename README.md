@@ -69,8 +69,10 @@ tdd
 
 **com.rb.oauth：认证客户端基础包**  
 
-**com.mall.cms：商城后台管理系统**  
+**com.mall.cms：后台管理系统**  
 > http://localhost:8000  
+> 框架：xadmin layui  
+> 注意：layui与vue有冲突，最好使用jquery。
 
 **com.cloud.gateway：网关中心**
 > http://localhost:1002

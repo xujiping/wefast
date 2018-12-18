@@ -6,10 +6,9 @@ spring:
         driver-class-name: com.mysql.jdbc.Driver
         sql-script-encoding: UTF-8
         platform: mysql
-        url: jdbc:mysql://localhost:3306/tj-hwzj?characterEncoding=utf8&useUnicode=true&useSSL=false&serverTimezone=Asia
-        /Shanghai
+        url: jdbc:mysql://127.0.0.1:3306/dobi?characterEncoding=utf8&useUnicode=true&useSSL=false&serverTimezone=Asia/Shanghai
         username: root
-        password: root123
+        password: xjp32.
     thymeleaf:
     #修改跳转的前缀和后缀,以下注释部分是spring boot的默认配置
         prefix: classpath:/templates/
@@ -79,7 +78,7 @@ mybatis-plus:
 
 # 资源目录
 file:
-    server: /data/0/hyzy/
+    server: /data/dobi/
 
 my:
     # 是否上传文件到oss

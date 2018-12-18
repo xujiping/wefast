@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.rb.cms.mapper.MallSkuMapper">
+
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.rb.cms.entity.MallSku">
+        <id column="id" property="id" />
+        <result column="goods_id" property="goodsId" />
+        <result column="sku" property="sku" />
+        <result column="price" property="price" />
+        <result column="inventory" property="inventory" />
+        <result column="sales_volume" property="salesVolume" />
+        <result column="create_time" property="createTime" />
+        <result column="create_by" property="createBy" />
+        <result column="update_time" property="updateTime" />
+        <result column="update_by" property="updateBy" />
+        <result column="status" property="status" />
+    </resultMap>
+
+</mapper>
