@@ -7,6 +7,9 @@
 3. Mybatis plus  
 4. swagger2  
 5. druid  
+6. redis  
+7. mysql  
+
 
 ## 项目结构   
 ```
@@ -37,6 +40,9 @@ tdd
 |—— demo  -- 测试demo
 |    |
 |    |—— oauth-client -- 认证客户端
+|
+|—— doc  -- 相关文档
+|
 |
 |—— frontend  -- 前端项目
 |    |
